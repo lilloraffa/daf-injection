@@ -1,0 +1,32 @@
+{
+  "name": "GTFS_shapes",
+  "owner": "torino",
+  "name_dataset": "shapes",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/torino_it/shapes.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_shapes",
+  "fields_conv":
+    [
+      {
+        "field_std": "shape_id",
+        "formula": "shape_id"
+      },
+      {
+        "field_std": "shape_pt_lat",
+        "formula": "shape_pt_lat"
+      },
+      {
+        "field_std": "shape_pt_lon",
+        "formula": "shape_pt_lon"
+      },
+      {
+        "field_std": "shape_pt_sequence",
+        "formula": "shape_pt_sequence"
+      }
+    ]
+
+}

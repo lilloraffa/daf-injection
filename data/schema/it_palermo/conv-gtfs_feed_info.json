@@ -1,0 +1,32 @@
+{
+  "name": "GTFS_feed_info",
+  "owner": "torino",
+  "name_dataset": "feed_info",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/torino_it/feed_info.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_feed_info",
+  "fields_conv":
+    [
+      {
+        "field_std": "feed_publisher_name",
+        "formula": "feed_publisher_name"
+      },
+      {
+        "field_std": "feed_publisher_url",
+        "formula": "feed_publisher_url"
+      },
+      {
+        "field_std": "feed_lang",
+        "formula": "feed_lang"
+      },
+      {
+        "field_std": "feed_version",
+        "formula": "feed_version"
+      }
+    ]
+
+}

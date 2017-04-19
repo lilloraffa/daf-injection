@@ -1,0 +1,56 @@
+{
+  "name": "GTFS_calendar",
+  "owner": "it_palermo",
+  "name_dataset": "calendar",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/it_palermo/calendar.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_calendar",
+  "fields_conv":
+    [
+      {
+        "field_std": "service_id",
+        "formula": "service_id"
+      },
+      {
+        "field_std": "monday",
+        "formula": "monday"
+      },
+      {
+        "field_std": "tuesday",
+        "formula": "tuesday"
+      },
+      {
+        "field_std": "wednesday",
+        "formula": "wednesday"
+      },
+      {
+        "field_std": "thursday",
+        "formula": "thursday"
+      },
+      {
+        "field_std": "friday",
+        "formula": "friday"
+      },
+      {
+        "field_std": "saturday",
+        "formula": "saturday"
+      },
+      {
+        "field_std": "sunday",
+        "formula": "sunday"
+      },
+      {
+        "field_std": "start_date",
+        "formula": "start_date"
+      },
+      {
+        "field_std": "end_date",
+        "formula": "end_date"
+      }
+    ]
+
+}

@@ -1,0 +1,36 @@
+{
+  "name": "GTFS_stop_times",
+  "owner": "torino",
+  "name_dataset": "stop_times",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/torino_it/stop_times.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_stop_times",
+  "fields_conv":
+    [
+      {
+        "field_std": "trip_id",
+        "formula": "trip_id"
+      },
+      {
+        "field_std": "arrival_time",
+        "formula": "arrival_time"
+      },
+      {
+        "field_std": "departure_time",
+        "formula": "departure_time"
+      },
+      {
+        "field_std": "stop_id",
+        "formula": "stop_id"
+      },
+      {
+        "field_std": "stop_sequence",
+        "formula": "stop_sequence"
+      }
+    ]
+
+}

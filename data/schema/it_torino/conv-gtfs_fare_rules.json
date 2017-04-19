@@ -1,0 +1,32 @@
+{
+  "name": "GTFS_fare_rules",
+  "owner": "torino",
+  "name_dataset": "fare_rules",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/torino_it/fare_rules.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_fare_rules",
+  "fields_conv":
+    [
+      {
+        "field_std": "fare_id",
+        "formula": "fare_id"
+      },
+      {
+        "field_std": "origin_id",
+        "formula": "origin_id"
+      },
+      {
+        "field_std": "destination_id",
+        "formula": "destination_id"
+      },
+      {
+        "field_std": "contains_id",
+        "formula": "contains_id"
+      }
+    ]
+
+}

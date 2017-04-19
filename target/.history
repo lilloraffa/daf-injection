@@ -1,0 +1,28 @@
+reload
+eclipse with-source=true
+exit
+reload
+exit
+reload
+eclipse with-source=true
+reload
+eclipse with-source=true
+compile
+reload
+eclipse with-source=true
+run
+compile
+eclipse with-source=true
+exit
+reload
+eclipse with-source=true
+:q
+exit
+eclipse
+compile
+eclipse
+exit
+eclipse
+exit
+eclipse
+exit

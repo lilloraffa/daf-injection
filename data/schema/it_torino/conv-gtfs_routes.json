@@ -1,0 +1,48 @@
+{
+  "name": "GTFS_routes",
+  "owner": "torino",
+  "name_dataset": "routes",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/torino_it/routes.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_routes",
+  "fields_conv":
+    [
+      {
+        "field_std": "route_id",
+        "formula": "route_id"
+      },
+      {
+        "field_std": "agency_id",
+        "formula": "agency_id"
+      },
+      {
+        "field_std": "route_short_name",
+        "formula": "route_short_name"
+      },
+      {
+        "field_std": "route_long_name",
+        "formula": "route_long_name"
+      },
+      {
+        "field_std": "route_desc",
+        "formula": "route_desc"
+      },
+      {
+        "field_std": "route_type",
+        "formula": "route_type"
+      },
+      {
+        "field_std": "route_url",
+        "formula": "route_url"
+      },
+      {
+        "field_std": "route_color",
+        "formula": "route_color"
+      }
+    ]
+
+}

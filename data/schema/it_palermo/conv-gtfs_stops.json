@@ -1,0 +1,60 @@
+{
+  "name": "GTFS_stops",
+  "owner": "torino",
+  "name_dataset": "stops",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/torino_it/stops.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_stops",
+  "fields_conv":
+    [
+      {
+        "field_std": "stop_lat",
+        "formula": "stop_lat"
+      },
+      {
+        "field_std": "stop_code",
+        "formula": "stop_code"
+      },
+      {
+        "field_std": "stop_lon",
+        "formula": "stop_lon"
+      },
+      {
+        "field_std": "stop_timezone",
+        "formula": "stop_timezone"
+      },
+      {
+        "field_std": "stop_url",
+        "formula": "stop_url"
+      },
+      {
+        "field_std": "parent_station",
+        "formula": "parent_station"
+      },
+      {
+        "field_std": "stop_desc",
+        "formula": "stop_desc"
+      },
+      {
+        "field_std": "stop_name",
+        "formula": "stop_name"
+      },
+      {
+        "field_std": "location_type",
+        "formula": "location_type"
+      },
+      {
+        "field_std": "stop_id",
+        "formula": "stop_id"
+      },
+      {
+        "field_std": "zone_id",
+        "formula": "zone_id"
+      }
+    ]
+
+}

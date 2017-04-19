@@ -1,0 +1,44 @@
+{
+  "name": "GTFS_agency",
+  "owner": "it_palermo",
+  "name_dataset": "agency",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/it_palermo/agency.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_agency",
+  "fields_conv":
+    [
+      {
+        "field_std": "agency_phone",
+        "formula": "agency_phone"
+      },
+      {
+        "field_std": "agency_fare_url",
+        "formula": "agency_fare_url"
+      },
+      {
+        "field_std": "agency_url",
+        "formula": "agency_url"
+      },
+      {
+        "field_std": "agency_id",
+        "formula": "agency_id"
+      },
+      {
+        "field_std": "agency_name",
+        "formula": "agency_name"
+      },
+      {
+        "field_std": "agency_timezone",
+        "formula": "agency_timezone"
+      },
+      {
+        "field_std": "agency_lang",
+        "formula": "agency_lang"
+      }
+    ]
+
+}

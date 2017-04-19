@@ -1,0 +1,28 @@
+{
+  "name": "GTFS_calendar_dates",
+  "owner": "it_palermo",
+  "name_dataset": "calendar_dates",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/it_palermo/calendar_dates.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_calendar_dates",
+  "fields_conv":
+    [
+      {
+        "field_std": "service_id",
+        "formula": "service_id"
+      },
+      {
+        "field_std": "date",
+        "formula": "date"
+      },
+      {
+        "field_std": "exception_type",
+        "formula": "exception_type"
+      }
+    ]
+
+}

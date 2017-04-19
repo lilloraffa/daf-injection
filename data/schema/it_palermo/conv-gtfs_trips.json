@@ -1,0 +1,44 @@
+{
+  "name": "GTFS_trips",
+  "owner": "it_palermo",
+  "name_dataset": "trips",
+  "src":
+    {
+      "type": "csv",
+      "url": "/Users/lilloraffa/Development/data/opendata/mob/gtfs/it_palermo/trips.txt",
+      "inj_src": "ftp"
+    },
+  "std_schema": "schema-gtfs_trips",
+  "fields_conv":
+    [
+      {
+        "field_std": "block_id",
+        "formula": "block_id"
+      },
+      {
+        "field_std": "route_id",
+        "formula": "route_id"
+      },
+      {
+        "field_std": "direction_id",
+        "formula": "direction_id"
+      },
+      {
+        "field_std": "trip_headsign",
+        "formula": "trip_headsign"
+      },
+      {
+        "field_std": "shape_id",
+        "formula": "shape_id"
+      },
+      {
+        "field_std": "service_id",
+        "formula": "service_id"
+      },
+      {
+        "field_std": "trip_id",
+        "formula": "trip_id"
+      }
+    ]
+
+}

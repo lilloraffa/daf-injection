@@ -1,0 +1,145 @@
+
+{
+  "id": 1,
+  "name": "GTFS Calendar",
+  "std_schema": "schema-gtfs_calendar",
+  "desc": "Dates for service IDs using a weekly schedule. Specify when service starts and ends, as well as days of the week where service is available.",
+  "ver": "1.0",
+  "cat": ["mobilita", "trasporto pubblico", "gtfs", "calendario"],
+  "tag": ["calendario", "mobilita", "trasporti", "trasporti pubblici", "aziende trasporti", "dataset vip", "gtfs"],
+  "owner": "daf",
+  "src": {
+    "type": "csv",
+    "url": "urlVal",
+    "table": "TableVal"
+  },
+  "info": {
+    "url": "https://developers.google.com/transit/gtfs/reference/"
+  },
+  "fields": [
+    {
+      "name": "service_id",
+      "format": "string",
+      "desc": "Contains an ID that uniquely identifies a set of dates when service is available for one or more routes. Each service_id value can appear at most once in a calendar.txt file. This value is dataset unique. It is referenced by the trips.txt file.",
+      "cat": "service",
+      "required": 1
+    },
+    {
+      "name": "monday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Mondays. A value of 1 indicates that service is available for all Mondays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Mondays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "tuesday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Tuesdays. A value of 1 indicates that service is available for all Tuesdays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Tuesdays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "wednesday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Wednesdays. A value of 1 indicates that service is available for all Wednesdays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Wednesdays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "thursday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Thursdays. A value of 1 indicates that service is available for all Thursdays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Thursdays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "friday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Fridays. A value of 1 indicates that service is available for all Fridays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Fridays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "saturday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Saturdays. A value of 1 indicates that service is available for all Saturdays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Saturdays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "sunday",
+      "format": "integer",
+      "desc": "Contains a binary value that indicates whether the service is valid for all Sundays. A value of 1 indicates that service is available for all Sundays in the date range. (The date range is specified using the start_date and end_date fields.) A value of 0 indicates that service is not available on Sundays in the date range.",
+      "cat": "service",
+      "required": 1,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "start_date",
+      "format": "string",
+      "desc": "The start_date field contains the start date for the service. The start_date field's value should be in YYYYMMDD format.",
+      "cat": "route",
+      "required": 1,
+      "constr": [
+        {
+          "type": "format_date",
+          "param": "YYYYMMDD"
+        }
+      ]
+    },
+    {
+      "name": "end_date",
+      "format": "string",
+      "desc": "Contains the end date for the service. This date is included in the service interval. The end_date field's value should be in YYYYMMDD format.",
+      "cat": "route",
+      "required": 1,
+      "constr": [
+        {
+          "type": "format_date",
+          "param": "YYYYMMDD"
+        }
+      ]
+    }
+  ]
+}

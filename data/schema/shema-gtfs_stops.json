@@ -1,0 +1,111 @@
+
+{
+  "id": 1,
+  "name": "GTFS Stops",
+  "std_schema": "schema-gtfs_stops",
+  "desc": "Individual locations where vehicles pick up or drop off passengers.",
+  "ver": "1.0",
+  "cat": ["mobilita", "trasporto pubblico", "gtfs", "stops"],
+  "tag": ["stops", "mobilita", "trasporti", "trasporti pubblici", "aziende trasporti", "dataset vip", "gtfs"],
+  "owner": "daf",
+  "src": {
+    "type": "csv",
+    "url": "urlVal",
+    "table": "TableVal"
+  },
+  "info": {
+    "url": "https://developers.google.com/transit/gtfs/reference/"
+  },
+  "fields": [
+    {
+      "name": "stop_id",
+      "format": "string",
+      "desc": "Contains an ID that uniquely identifies a stop or station. Multiple routes may use the same stop. The stop_id is dataset unique.",
+      "cat": "anagrafica",
+      "required": 1
+    },
+    {
+      "name": "stop_code",
+      "format": "string",
+      "desc": "Contains short text or a number that uniquely identifies the stop for passengers. Stop codes are often used in phone-based transit information systems or printed on stop signage to make it easier for riders to get a stop schedule or real-time arrival information for a particular stop. The stop_code field should only be used for stop codes that are displayed to passengers. For internal codes, use stop_id. This field should be left blank for stops without a code.",
+      "cat": "stop",
+      "required": 0
+    },
+    {
+      "name": "stop_name",
+      "format": "string",
+      "desc": "Contains the name of a stop or station. Please use a name that people will understand in the local and tourist vernacular.",
+      "cat": "stop",
+      "required": 1
+    },
+    {
+      "name": "stop_desc",
+      "format": "string",
+      "desc": "Contains a description of a stop. Please provide useful, quality information. Do not simply duplicate the name of the stop.",
+      "cat": "stop",
+      "required": 0
+    },
+    {
+      "name": "stop_lat",
+      "format": "string",
+      "desc": "Contains the latitude of a stop or station. The field value must be a valid WGS 84 latitude.",
+      "cat": "coordinate",
+      "required": 1
+    },
+    {
+      "name": "stop_lon",
+      "format": "string",
+      "desc": "Contains the longitude of a stop or station. The field value must be a valid WGS 84 longitude value from -180 to 180.",
+      "cat": "cordinate",
+      "required": 1
+    },
+    {
+      "name": "zone_id",
+      "format": "string",
+      "desc": "Specifies the URL of a web page that allows a rider to purchase tickets or other fare instruments for that agency online. The value must be a fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See http://www.w3.org/Addressing/URL/4_URI_Recommentations.html for a description of how to create fully qualified URL values.",
+      "cat": "anagrafica",
+      "required": 0
+    },
+    {
+      "name": "stop_url",
+      "format": "string",
+      "desc": "Contains the URL of a web page about a particular stop. This should be different from the agency_url and the route_url fields. The value must be a fully qualified URL that includes http:// or https://, and any special characters in the URL must be correctly escaped. See http://www.w3.org/Addressing/URL/4_URI_Recommentations.html for a description of how to create fully qualified URL values.",
+      "cat": "anagrafica",
+      "required": 0
+    },
+    {
+      "name": "location_type",
+      "format": "string",
+      "desc": "Identifies whether this stop ID represents a stop or station. If no location type is specified, or the location_type is blank, stop IDs are treated as stops. Stations can have different properties from stops when they are represented on a map or used in trip planning. The location type field can have the following values: 0 or blank: Stop. A location where passengers board or disembark from a transit vehicle. 1: Station. A physical structure or area that contains one or more stop.",
+      "cat": "anagrafica",
+      "required": 0,
+      "constr": [
+        {
+          "type": "list",
+          "param": [0,1]
+        }
+      ]
+    },
+    {
+      "name": "parent_station",
+      "format": "string",
+      "desc": "For stops that are physically located inside stations, this field identifies the station associated with the stop. To use this field, stops.txt must also contain a row where this stop ID is assigned location type=1.",
+      "cat": "anagrafica",
+      "required": 0
+    },
+    {
+      "name": "stop_timezone",
+      "format": "string",
+      "desc": "Contains the timezone in which this stop or station is located. Please refer to Wikipedia List of Timezones for a list of valid values. If omitted, the stop should be assumed to be located in the timezone specified by agency_timezone in agency.txt. When a stop has a parent station, the stop is considered to be in the timezone specified by the parent station's stop_timezone value. If the parent has no stop_timezone value, the stops that belong to that station are assumed to be in the timezone specified by agency_timezone, even if the stops have their own stop_timezone values. In other words, if a given stop has a parent_station value, any stop_timezone value specified for that stop must be ignored. Even if stop_timezone values are provided in stops.txt, the times in stop_times.txt should continue to be specified as time since midnight in the timezone specified by agency_timezone in agency.txt. This ensures that the time values in a trip always increase over the course of a trip, regardless of which timezones the trip crosses.",
+      "cat": "anagrafica",
+      "required": 0
+    },
+    {
+      "name": "wheelchair_boarding",
+      "format": "string",
+      "desc": "Identifies whether wheelchair boardings are possible from the specified stop or station. The field can have the following values: 0 (or empty): Indicates that there is no accessibility information for the stop 1: Indicates that at least some vehicles at this stop can be boarded by a rider in a wheelchair 2: Wheelchair boarding is not possible at this stop When a stop is part of a larger station complex, as indicated by a stop with a parent_station value, the stop's wheelchair_boarding field has the following additional semantics: 0 (or empty): The stop will inherit its wheelchair_boarding value from the parent station, if specified in the parent 1: There exists some accessible path from outside the station to the specific stop / platform 2: There exists no accessible path from outside the station to the specific stop/platform",
+      "cat": "anagrafica",
+      "required": 0
+    }
+  ]
+}
