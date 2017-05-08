@@ -241,7 +241,7 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable {
 	    val basePath = config.getString("Inj-properties.hdfsBasePath")
 	    //val basePath = "/Users/lilloraffa/Development/data/daf_test/"
 			val nameData = schemaMgmt.finalSchema.nameDataset
-			val typePath = "rawData/"
+			val typePath = "ordData/"
 			val ownerPath = schemaMgmt.finalSchema.owner
 			val genrePath = schemaMgmt.finalSchema.cat(0)  //make stringent check here
 			val ownGrpPath = schemaMgmt.finalSchema.groupOwn
@@ -270,7 +270,7 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable {
 	  try {
 	    val basePath = config.getString("Inj-properties.hdfsBasePath")
 	    //val basePath = "/Users/lilloraffa/Development/data/daf_test/"
-			val typePath = "rawData/"
+			val typePath = "ordData/"
 			val ownerPath = schemaMgmt.finalSchema.owner
 			val genrePath = schemaMgmt.finalSchema.cat(0)  //make stringent check here
 			val ownGrpPath = schemaMgmt.finalSchema.groupOwn
