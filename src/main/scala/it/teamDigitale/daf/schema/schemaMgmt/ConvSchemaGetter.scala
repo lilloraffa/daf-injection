@@ -6,38 +6,40 @@ import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Sorts._
 import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.bson.codecs.Macros._
-import it.teamDigitale.daf.utils.MongoMgmt
+import it.teamDigitale.daf.utils.{MongoMgmt, JsonMgmt}
 import it.teamDigitale.daf.utils.HelperMongo._
 import it.teamDigitale.daf.schema.ConvSchema
+import it.teamDigitale.daf.uri.UriDataset
 import play.api.libs.json.JsValue.jsValueToJsLookup
-//import it.teamDigitale.daf.schema.schemaMgmt.SchemaGetter
+import scala.util.{Try, Success, Failure}
+import org.apache.logging.log4j.scala.Logging
+import org.apache.logging.log4j.Level
 
 
 
-class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Option[String] = None, dataPath: Option[String] = None, owner: Option[String] = None, infoData: Option[Map[String, String]] = None) extends SchemaGetter[ConvSchema]{
+
+class ConvSchemaGetter(metadataJson: Option[JsValue] = None, uri: Option[String] = None, nameDataset: Option[String] = None, convSchemaPath: Option[String] = None, dataPath: Option[String] = None, owner: Option[String] = None, infoData: Option[Map[String, String]] = None) extends SchemaGetter[ConvSchema] with Logging{
   
-  //val infoQuery: Map[String,String] = getInfoQuery()
   
-   def getSchema() ={
-    //TODO change this to implement the new process
-	  /*
-	   * 1. Mi dai nome del file dati e cerco il convSchema nel datastore
-	   * 1.1 Se convSchema non e' definito, lo si crea di default, con indicazione di dataset inserito senza schema
-	   * 2. Mi dai il nome del convSchema, cerco il file dei dati
-	   *
-	   */
-	  
-	  (nameDataset, convSchemaPath, dataPath, owner, infoData) match {
-		
-	    // 1. Prendo nome di convSchema e Owner
-  		case (Some(nameDatasetIn), None, None, Some(ownerIn), None) => {
+  def getSchema(): Option[ConvSchema] ={
+    
+    (metadataJson, uri, nameDataset, convSchemaPath, dataPath, owner, infoData) match {
+  	
+      //TODO: ConvSchemaGetter should manage only the JSON in input, all the search stuff should be managed by the Catalogue API.
+      // 1. Prendo tutto il Json che mi arriva da API in fase di inserimento - This should be the only one needed here. All the rest should be managed via API Catalogue
+  		case (Some(json), None, None, None, None, None, None) => {
+  		  retrieveSchema(json)
+  		  //retrieveSchema(infoQuery)
+  		}
+      // 1. Prendo nome di convSchema e Owner
+  		case (None, None, Some(nameDatasetIn), None, None, Some(ownerIn), None) => {
   		  val infoQuery = Map("name_dataset" -> nameDatasetIn, "owner"-> ownerIn)
-  		  retrieveSchema(infoQuery)
+  		  retrieveSchemaMongo(infoQuery)
   		}
     	// 2. Prendo nome del file e Owner
-  		case (None, None, Some(dataPathIn), Some(ownerIn), None) => {
+  		case (None, None, None, None, Some(dataPathIn), Some(ownerIn), None) => {
   		  val infoQuery:Map[String,String] = Map("src.url" -> dataPathIn, "owner"-> ownerIn)
-  		  val schema = retrieveSchema(infoQuery)
+  		  val schema = retrieveSchemaMongo(infoQuery)
   		  // Se esiste, allora ritorno quello, altrimenti devo crearlo
   		  schema match {
   		    case Some(s) => Some(s)
@@ -50,9 +52,9 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
   		  }
   		}
     	// 3. Solo pathFile + other info dei dati
-  		case (None, None, Some(dataPathIn), Some(ownerIn), Some(infoDataIn)) => {
+  		case (None, None, None, None, Some(dataPathIn), Some(ownerIn), Some(infoDataIn)) => {
     		val infoQuery = Map("src.url" -> dataPathIn, "owner"-> ownerIn)
-  		  val schema: Option[ConvSchema] = retrieveSchema(infoQuery)
+  		  val schema: Option[ConvSchema] = retrieveSchemaMongo(infoQuery)
   		  // Se esiste, allora ritorno quello, altrimenti devo crearlo
   		  schema match {
   		    case Some(s) => Some(s)
@@ -66,12 +68,40 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
   		  }
   		}
   		// 4. NameDataset + dataPath + Owner --> needs to change the dataPath
-  		case ((Some(nameDatasetIn), None, Some(dataPathIn), Some(ownerIn), None)) => {
+  		case (None, None, Some(nameDatasetIn), None, Some(dataPathIn), Some(ownerIn), None) => {
     		val infoQuery = Map("name_dataset" -> nameDatasetIn, "owner"-> ownerIn, "other_src.url" ->dataPathIn)
-  		  retrieveSchema(infoQuery)
+  		  retrieveSchemaMongo(infoQuery)
   		}
   	}
   }
+   
+
+   
+  private def retrieveSchema(json: JsValue): Option[ConvSchema] = {
+    //da togliere, verificare
+    val json_ops = (json \ "ops").asOpt[JsValue].getOrElse(Json.obj())
+    val json_dcatap = (json \ "dcatap").asOpt[JsValue].getOrElse(Json.obj())
+    val json_dataschema = (json \ "dataschema").asOpt[JsValue].getOrElse(Json.obj())
+
+    val convSchema = ConvSchema(
+        
+        uri = getString(json, "uri").getOrElse("-1"),  
+        name = getString(json, "name").getOrElse("unknown"),
+        nameDataset = getString(json, "dataset_name").getOrElse("unknown_" + System.currentTimeMillis / 1000 ),
+        theme = getString(json, "theme").getOrElse("unknown"), 
+        cat = getCat(json, "cat"),
+        groupOwn = getString(json, "group_own").getOrElse("open"),
+        owner = getString(json, "owner").getOrElse("unknown"),
+        src = getMap(json, "input_src").getOrElse(Map()),
+        dataSchema = getDataSchema(json, "data_schema"),
+        stdSchemaUri = getString(json, "std_schema"),
+        reqFields = getReqFields(json, "fields_conv"),
+        custFields = getFields(json, "fields_custom")
+          
+    )
+    Some(convSchema)
+  }
+   
   
   private def findQueryBuilder(infoQuery: Map[String, String]) = {
     val args = infoQuery.filterKeys(_ != "other_src.url").map {
@@ -80,7 +110,7 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
     and(args.toSeq:_*)
   }
   
-  private def retrieveSchema(infoQuery: Map[String, String]): Option[ConvSchema] = {
+  private def retrieveSchemaMongo(infoQuery: Map[String, String]): Option[ConvSchema] = {
     //val codecRegistry = fromRegistries(fromProviders(classOf[ConvSchema]), DEFAULT_CODEC_REGISTRY)
     //TODO complete the following code with query mechanism using the map
     println(infoQuery)
@@ -104,6 +134,7 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
         }
         case _ => getSrc(json, "src").getOrElse(Map())
       }
+      /*
       val convSchema = ConvSchema(
           name = getString(json, "name").getOrElse(""),
           nameDataset = getString(json, "name_dataset", normalize=true).getOrElse(""),
@@ -118,6 +149,9 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
       )
   
       Some(convSchema)
+      * 
+      */
+      None
     } catch {
       case unknown: Throwable => {
         println("Exception in ConvSchemaGetter! - " + unknown)
@@ -130,12 +164,12 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
     mapIn - "url" + (changeFieldName -> changeFieldValue)
   }
   
-  def getReqFields(json: JsValue, name: String): List[Map[String, String]]  = {
-    val fromJson = (json \ name).validate[List[Map[String, String]]]
+  def getReqFields(json: JsValue, name: String): Option[Seq[Map[String, String]]]  = {
+    val fromJson = JsonMgmt.jsonRec(json, MetadataLU.getFieldSeq(name)).validate[List[Map[String, String]]]
     
-    val listField: Option[List[Map[String, String]]] = fromJson match {
+    fromJson match {
       case e: JsError => {
-        println("Error in SchemaMgmt --> listReqField: " + JsError.toJson(e).toString())
+        logger.error("Error getReqFields: " + JsError.toJson(e).toString())
         None
       }
       
@@ -150,14 +184,5 @@ class ConvSchemaGetter(nameDataset: Option[String] = None, convSchemaPath: Optio
       }
     }
     
-    listField match {
-      case Some(s) => s
-      case _ =>{
-        println("errore")
-        List()
-      }
-    }
   }
-  
-  
 }

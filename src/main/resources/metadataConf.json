@@ -1,0 +1,16 @@
+{
+  "name": ["dcatap", "dct:title", "val"],
+  "dataset_name": ["dataschema", "name"],
+  "uri": ["ops", "uri"],
+  "theme": ["dcatap", "dcat:theme", "val"],
+  "cat": ["dcatap", "dct:subject"],
+  "group_own": ["ops", "group_own"],
+  "owner": ["dcatap", "dct:rightsHolder", "val"],
+  "input_src": ["ops", "input_src"],
+  "input_src_name": ["ops", "input_src", "name"],
+  "is_std": ["ops", "is_std"],
+  "std_schema": ["ops", "std_schema", "std_uri"],
+  "data_schema": ["dataschema"],
+  "fields_conv": ["ops", "std_schema", "fields_conv"],
+  "fields_custom": ["ops", "std_schema", "fields_custom"]
+}
