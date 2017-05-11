@@ -2,36 +2,37 @@ package it.teamDigitale.daf.injestion
 
 import it.teamDigitale.daf.utils.{TxtFile, JsonMgmt}
 import play.api.libs.json._
-import it.teamDigitale.daf.schema.schemaMgmt.SchemaMgmt
+import it.teamDigitale.daf.schema.schemaMgmt.{SchemaMgmt, SchemaReport}
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.{Column, Row}
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.types._
 import it.teamDigitale.daf.schema.{ConvSchema, StdSchema}
 import it.teamDigitale.daf.uri.UriDataset
+import it.teamDigitale.daf.schema.schemaMgmt.FieldTypeMgmt
 import org.apache.logging.log4j.scala.Logging
 import org.apache.logging.log4j.Level
 import com.typesafe.config.ConfigFactory
 
-class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
+class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
   
   var isStdData = false  //change the logic!!!
   var config = ConfigFactory.load()
   
-  def doInj(): Boolean = {
+  def doInj(): InjReport = {
 
     //Build the spark context
     val conf = new SparkConf().setAppName("Inj-csv").setMaster("local[2]")
     val sc = new SparkContext(conf)
   	val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     
-    val test = try{
+    val resultReport: InjReport = try{
       
 	    //Get the column names and the spark dataframe
-  		val dataFilePath = convSchema.src.get("url").getOrElse("")
+  		val dataFilePath = schemaMgmt.convSchema.src.get("url").getOrElse("")
   		val firstLine = TxtFile.firstLine(dataFilePath).getOrElse("-1")
   		val sep = TxtFile.csvGetSep(firstLine)
   		val colNames = firstLine.split(sep)
@@ -41,90 +42,158 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
       			.option("delimiter", sep)
       			.option("inferSchema", "true") // Automatically infer data types
       			.load(dataFilePath)
+      
       //TODO put here the inference on the input schema (name and type) and pass it to SchemaMgmt
-      val schemaMgmt = new SchemaMgmt(convSchema)
-  		
-  		//check if a convSchema has been correctly formed, otherwise it does an ingestion of a Raw dataset
-  		
-		  //A ConvSchema exists, proceed for Standard and/or Ordinary Dataset ingestion
-  		
-  			
+      			
   		val timestamp: Long = System.currentTimeMillis / 1000
   		
   		//Code to save Ordinary Dataset to be used in the pattern matching below
-  		val saveOrd = {
+  		def saveOrd(uri: UriDataset): Boolean = {
   		  //Create and save the Ordinary DataFrame
     		val ordinaryDf = dfIn
     		  .withColumn("ts", expr("'" + timestamp + "'"))
-    		val testSavedOrdinary: Boolean = saveOrdDs(ordinaryDf, schemaMgmt)
-  		}
-  		//Code to save Std Dataset to be used in the pattern matching below
-  		val saveStd = {
-  		  //If StdSchema is defined, create the StdDF and save it
-    		val stdDf = getDataStd(dfIn, convSchema, stdSchema)
-    		  .withColumn("ts", expr("'" + timestamp + "'"))
-    		  .withColumn("owner", expr("'" + convSchema.owner + "'"))
-    		val testSavedStd: Boolean = saveStdDs(stdDf, schemaMgmt)
+    		saveOrdDs(ordinaryDf, schemaMgmt.convSchema, uri)
   		}
   		
-  		//Get the dataset uri
-  		val uriDs = getUriDs() 
+  		//Code to save Std Dataset to be used in the pattern matching below
+  		def saveStd(stdSchemaIn: StdSchema): Boolean = {
+  		  //If StdSchema is defined, create the StdDF and save it
+    		val stdDf = getDataStd(dfIn, schemaMgmt.convSchema, stdSchemaIn)
+    		  .withColumn("owner", expr("'" + schemaMgmt.convSchema.owner + "'"))
+    		  .withColumn("ts", expr("'" + timestamp + "'"))
+    		println(stdDf.schema)
+
+    		saveStdDs(stdDf, schemaMgmt.convSchema, UriDataset(stdSchemaIn.uri))
+  		}
   		
   		schemaMgmt.schemaReport match {
   		  
+  		  
     		//StdSchema Exists and all the rest of the tests went ok
     		case SchemaReport(
-    		      hasInputDataSchema = true,
-    		      hasStdSchema = true,
-    		      checkStdSchema = true,
-    		      checkInSchema = true      
+    		    _,  //hasInputDataSchema
+    		    true,  //hasStdSchema
+    		    true,  //checkStdSchema
+    		    true   //checkInSchema  
     		) =>{
 	        //TODO do the checks based on the content of the df
-	        saveOrd
-	        saveStd
-	        true
+    		  val uriDs = getUriDs(schemaMgmt.convSchema, "ord") 
+
+	        val statusOrd = saveOrd(uriDs)
+	        val statusStd = saveStd(schemaMgmt.stdSchema.get)
+          
+	        InjReport(
+	            uri = uriDs.getUri(),
+              url = uriDs.getUrl(),
+              stdSchemaUri = schemaMgmt.convSchema.stdSchemaUri,
+              isStd = schemaMgmt.convSchema.isStd,
+              isInStd = true,
+              isOrd = true,
+              isRaw = false,
+              statusOrd = Some(statusOrd),
+              statusStd = Some(statusStd),
+              statusRaw = None
+	        )
   		  }
-    		//
+    		//It is an ordinary dataset, so it has no StdSchema associated with
     		case SchemaReport(
-    		      hasInputDataSchema = true,
-    		      hasStdSchema = false,
-    		      checkStdSchema = _,
-    		      checkInSchema = true      
+    		    _,  //hasInputDataSchema
+    		    false,  //hasStdSchema
+    		    _,  //checkStdSchema
+    		    true   //checkInSchema  
     		) =>{
+    		
 	        //TODO do the checks based on the content of the df
-	        saveOrd
-	        true
+    		  val uriDs = getUriDs(schemaMgmt.convSchema, "ord") 
+	        val statusOrd = saveOrd(uriDs)
+	        
+	        InjReport(
+	            uri = uriDs.getUri(),
+              url = uriDs.getUrl(),
+              stdSchemaUri = schemaMgmt.convSchema.stdSchemaUri,
+              isStd = schemaMgmt.convSchema.isStd,
+              isInStd = false,
+              isOrd = true,
+              isRaw = false,
+              statusOrd = Some(statusOrd),
+              statusStd = None,
+              statusRaw = None
+	        )
   		  }
+    		//Dataset could not be associated with neither Std or Ordinary, so it is treated as Raw
     		case _ => {
     		  
-    		  val uriMgmt = UriDataset(
-  		        domain = "daf",
-              typeDs = "raw",
-              groupOwn = convSchema.groupOwn,
-              owner = convSchema.owner,
-              theme = convSchema.theme,
-              nameDs = )
-            
-  		    saveRawDs(dfIn, uri)
+    		  val uriDs = getUriDs(schemaMgmt.convSchema, "raw") 
+  		    val statusRaw = saveRawDs(dfIn, uriDs)
+  		    
+  		    InjReport(
+	            uri = uriDs.getUri(),
+              url = uriDs.getUrl(),
+              stdSchemaUri = schemaMgmt.convSchema.stdSchemaUri,
+              isStd = schemaMgmt.convSchema.isStd,
+              isInStd = false,
+              isOrd = false,
+              isRaw = true,
+              statusOrd = None,
+              statusStd = None,
+              statusRaw = Some(statusRaw)
+	        )
         }
   		}
-  		
 
-  			
 	  } catch {
 	    case unknown: Throwable => {
-        println("Exception in DataInjCsv -> doInj() - " + unknown)
-        println("Nothing to injest")
-        false
+        logger.error("Error in Injestion. No injestion performed.")
+        val uriDs = getUriDs(schemaMgmt.convSchema)
+        InjReport(
+	            uri = uriDs.getUri(),
+              url = uriDs.getUrl(),
+              stdSchemaUri = schemaMgmt.convSchema.stdSchemaUri,
+              isStd = schemaMgmt.convSchema.isStd,
+              isInStd = false,
+              isOrd = false,
+              isRaw = false,
+              statusOrd = None,
+              statusStd = None,
+              statusRaw = None
+	        )
       }
 	  }
-	  sc.stop()
-	  test
-    
+
+    sc.stop()
+    resultReport
     
   }
-  
-  private def getUriDs(convSchema: ConvSchema): String {
+  /*
+   * This function is needed to get the uri of the incoming dataset, it manages the construction of uri for new dataset.
+   */
+  private def getUriDs(convSchema: ConvSchema, typeDsIn: String = ""): UriDataset = {
+    (convSchema.uri, convSchema.isStd) match {
+      //URI already exists, so the dataset is already present in the catalogue
+      case (Some(s), _) => UriDataset(s)
+      
+      case (None, Some(true)) => UriDataset(
+            domain = "daf",
+            typeDs = "std",
+            groupOwn = convSchema.groupOwn,
+            owner = convSchema.owner,
+            theme = convSchema.theme,
+            nameDs = convSchema.nameDataset
+        )
+      //URI does not exists, so the dataset is new -> URI will be created
+      case _ =>{
+        //Get the Dataset Type on the basis of the available info
+        val typeDs = if (typeDsIn.equals("ord") || typeDsIn.equals("raw")) typeDsIn else "raw"
+        UriDataset(
+            domain = "daf",
+            typeDs = typeDs,
+            groupOwn = convSchema.groupOwn,
+            owner = convSchema.owner,
+            theme = convSchema.theme,
+            nameDs = convSchema.nameDataset
+        )
+      }
+    }
     
   }
 
@@ -142,10 +211,11 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
 		val stdFields = stdSchema.dataSchema.fields.map{ schemaField =>
 		  
 		  val nameStd = schemaField.name
+		  val typeStd = schemaField.typeField
 		  val resLUConv = convSchema.reqFields.get.filter(x=>x("field_std")==nameStd)
 		  resLUConv match {
 		    //The StdSchema Field is not present in the input list --> then it becomes empty (it has been already checked that this field is nullable and not required)
-		    case Nil => lit(null).as(nameStd)
+		    case Nil => lit(null).as(nameStd).cast(FieldTypeMgmt.convAvro2Spark(typeStd.toString))
 		    
 		    //A conversion has been identified and it is unique
 		    case x::Nil => expr(x("formula")).as(x("field_std"))
@@ -168,20 +238,10 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
 		
   }
   
-  private def saveOrdDs(df: DataFrame, convSchema: ConvSchema): Boolean = {
+  private def saveOrdDs(df: DataFrame, convSchema: ConvSchema, uriMgmt: UriDataset): Boolean = {
     
     try {
-	    
-	    val uriMgmt = UriDataset(convSchema.uri)
-	    /*
-	    val uriMgmt = UriDataset(convSchema.uri)
-			val nameData = uriMgmt.nameDs
-			val typePath = uriMgmt.typeDs
-			val genrePath = convSchema.theme
-			val ownGrpPath = convSchema.groupOwn
-			val savePath = basePath + typePath + genrePath + "/" + ownGrpPath + "/" + nameData
-			* 
-			*/
+
 			val savePath = uriMgmt.getUrl
 			
 			df
@@ -190,6 +250,7 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
 			.partitionBy("ts")
 			.mode(SaveMode.Append)
 			.parquet(savePath + ".parquet")
+
 			true
 	  } catch {
 	    case unknown: Throwable => {
@@ -199,10 +260,10 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
 	  }
   }
   
-  private def saveStdDs(df: DataFrame, convSchema: ConvSchema): Boolean = {
+  private def saveStdDs(df: DataFrame, convSchema: ConvSchema, uriMgmt: UriDataset): Boolean = {
     
     try {
-	    val uriMgmt = UriDataset(convSchema.stdSchemaUri)
+      //Here you need to manage if the dataset is a new StdSchema or an existing one.
 			val savePath = uriMgmt.getUrl
 			
 			df
@@ -211,6 +272,8 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
 			.partitionBy("owner", "ts")
 			.mode(SaveMode.Append)
 			.parquet(savePath + ".parquet")
+
+
 			true
 	  } catch {
 	    case unknown: Throwable => {
@@ -220,28 +283,17 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
 	  }
   }
   
-  private def saveRawDs(df: DataFrame, convSchema: ConvSchema): Boolean = {
+  private def saveRawDs(df: DataFrame, uriMgmt: UriDataset): Boolean = {
     
     try {
-	    convSchema.uri match {
-	      case 
-	    }
-	    val uriMgmt = UriDataset(convSchema.uri)
-	    /*
-	    val uriMgmt = UriDataset(convSchema.uri)
-			val nameData = uriMgmt.nameDs
-			val typePath = uriMgmt.typeDs
-			val genrePath = convSchema.theme
-			val ownGrpPath = convSchema.groupOwn
-			val savePath = basePath + typePath + genrePath + "/" + ownGrpPath + "/" + nameData
-			* 
-			*/
+	    
+
 			val savePath = uriMgmt.getUrl
-			
+
 			df
-			.repartition(col("ts"))
+			//.repartition(col("ts"))
 			.write
-			.partitionBy("ts")
+			//.partitionBy("ts")
 			.mode(SaveMode.Append)
 			.parquet(savePath + ".parquet")
 			true
@@ -251,6 +303,10 @@ class DataInjCsv(convSchema: ConvSchema) extends Serializable with Logging {
         false
       }
 	  }
+  }
+  
+  def cleanDf(df: DataFrame) = {
+    df.schema
   }
 
 }

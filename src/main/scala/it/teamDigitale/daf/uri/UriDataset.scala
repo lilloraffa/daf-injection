@@ -15,8 +15,8 @@ case class UriDataset(
   
   val config = ConfigFactory.load()
   
-  def gerUri(): String = {
-    domain + "://" + typeDs + "/" + groupOwn + "/" + owner + "/" + theme + "/" + nameDs
+  def getUri(): String = {
+    domain + "://" + "dataset/" + typeDs + "/" + groupOwn + "/" + owner + "/" + theme + "/" + nameDs
   }
 
   
@@ -27,6 +27,7 @@ case class UriDataset(
     typeDs match {
       case "std" => basePath + baseDataPath + "/" + typeDs + "/" + theme + "/" + groupOwn + "/" + nameDs
       case "ord" => basePath + baseDataPath + "/" + typeDs + "/" + owner + "/" + theme + "/" + groupOwn + "/" + nameDs
+      case "raw" => basePath + baseDataPath + "/" + typeDs + "/" + owner + "/" + theme + "/" + groupOwn + "/" + nameDs
       case _ => "-1"
     }
   }

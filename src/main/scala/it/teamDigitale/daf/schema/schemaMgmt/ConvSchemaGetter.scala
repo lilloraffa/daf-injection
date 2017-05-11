@@ -85,9 +85,10 @@ class ConvSchemaGetter(metadataJson: Option[JsValue] = None, uri: Option[String]
 
     val convSchema = ConvSchema(
         
-        uri = getString(json, "uri").getOrElse("-1"),  
+        uri = getString(json, "uri"),  
         name = getString(json, "name").getOrElse("unknown"),
         nameDataset = getString(json, "dataset_name").getOrElse("unknown_" + System.currentTimeMillis / 1000 ),
+        isStd = getBoolean(json, "is_std"),
         theme = getString(json, "theme").getOrElse("unknown"), 
         cat = getCat(json, "cat"),
         groupOwn = getString(json, "group_own").getOrElse("open"),

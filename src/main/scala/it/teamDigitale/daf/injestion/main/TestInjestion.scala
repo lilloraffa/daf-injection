@@ -1,7 +1,7 @@
 package it.teamDigitale.daf.injestion.main
 
 import it.teamDigitale.daf.injestion.DataInjCsv
-import it.teamDigitale.daf.schema.schemaMgmt.ConvSchemaGetter
+import it.teamDigitale.daf.schema.schemaMgmt.{ConvSchemaGetter, SchemaMgmt}
 import it.teamDigitale.daf.utils.FileOps
 import java.io.File
 import com.typesafe.config.ConfigFactory
@@ -42,8 +42,8 @@ object TestInjestion extends App {
             dataPath = Some(file.getPath())
           //dataPath = Some(dataFilePath)
           )).getSchema() match {
-            case Some(schema) => {
-              val injestion = new DataInjCsv(schema)
+            case Some(convSchema) => {
+              val injestion = new DataInjCsv(new SchemaMgmt(convSchema))
               injestion.doInj()
               //Spostare il file in folder .done
             }

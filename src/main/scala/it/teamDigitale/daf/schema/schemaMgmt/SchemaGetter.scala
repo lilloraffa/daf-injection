@@ -19,6 +19,16 @@ trait SchemaGetter[C] extends Logging {
     JsonMgmt.jsonRec(json, MetadataLU.getFieldSeq(name)).asOpt[String]
   }
   
+  def getBoolean(json: JsValue, name: String): Option[Boolean] = {
+    JsonMgmt.jsonRec(json, MetadataLU.getFieldSeq(name)).asOpt[Boolean]
+  }
+  /*
+  def get[T<:AnyRef](json: JsValue, name: String): Option[T] = {
+    JsonMgmt.jsonRec(json, MetadataLU.getFieldSeq(name)).asOpt[T]
+  }
+  * 
+  */
+  
   /*
    * TODO da capire se serve
   def getBasicInfo(json: JsValue): Map[String, String] = {

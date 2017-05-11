@@ -6,7 +6,8 @@ import play.api.libs.json._
 case class ConvSchema (
       name: String,
       nameDataset: String,  //to be deleted
-      uri: String,
+      uri: Option[String],
+      isStd: Option[Boolean],
       theme: String,
       cat: Option[Seq[String]],
       groupOwn: String,
