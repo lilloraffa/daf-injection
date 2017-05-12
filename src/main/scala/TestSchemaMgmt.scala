@@ -99,6 +99,13 @@ object TestSchemaMgmt extends App with Logging {
   */
   
   
+  /*
+  val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-operational.json"
+  val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dcatapit.json"
+  val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dataschema.json"
+  */
+  
+  //Vedi in resources/dataschema
   
   val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-operational.json"
   val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dcatapit.json"
