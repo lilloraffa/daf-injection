@@ -43,7 +43,7 @@
   {
     "ing_type": "pull",
     "src_type": "csv",
-    "url": "/Users/lilloraffa/Development/data/daf_injftp/it_torino/agency.txt"
+    "url": "/Users/fabiana/git/daf-injection/src/main/resources/agency.txt"
   }
 
 }

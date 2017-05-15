@@ -107,17 +107,23 @@ object TestSchemaMgmt extends App with Logging {
   
   //Vedi in resources/dataschema
   
-  val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-operational.json"
-  val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dcatapit.json"
-  val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dataschema.json"
+  //val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-operational.json"
+  //val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dcatapit.json"
+  //val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dataschema.json"
+
+
+
+  val stream_operational = getClass.getResourceAsStream("/dataschema/data-operational.json")
+  val stream_dcatap = getClass.getResourceAsStream("/dataschema/data-dcatapit.json")
+  val stream_dataschema = getClass.getResourceAsStream("/dataschema/data-dataschema.json")
   
-  val stream_operational = new FileInputStream(file_operational)
+ // val stream_operational = new FileInputStream(file_operational)
   val json_operational = try {  Json.parse(stream_operational) } finally { stream_operational.close() }
   
-  val stream_dcatap = new FileInputStream(file_dcatap)
+ // val stream_dcatap = new FileInputStream(file_dcatap)
   val json_dcatap = try {  Json.parse(stream_dcatap) } finally { stream_dcatap.close() }
   
-  val stream_dataschema = new FileInputStream(file_dataschema)
+  //val stream_dataschema = new FileInputStream(file_dataschema)
   val json_dataschema = try {  Json.parse(stream_dataschema) } finally { stream_dataschema.close() }
   
   val json: JsValue = Json.obj(

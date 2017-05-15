@@ -17,13 +17,17 @@ class StdSchemaGetter(schemaName: String) extends SchemaGetter[StdSchema]{
     
     //look for standard schema a StdSchema, by calling a given service.
     //TODO - All the following are temporary and will be deleted once the API is ready
-    val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-operational.json"
-    val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-dcatapit.json"
-    val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-dataschema.json"
-    
-    val json_operational = JsonMgmt.getJson(file_operational)
-    val json_dcatap = JsonMgmt.getJson(file_dcatap)
-    val json_dataschema = JsonMgmt.getJson(file_dataschema)
+    //val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-operational.json"
+    //val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-dcatapit.json"
+    //val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-dataschema.json"
+
+    val stream_operational = getClass.getResourceAsStream("/dataschema/stdSchema/std-operational.json")
+    val stream_dcatap = getClass.getResourceAsStream("/dataschema/stdSchema/std-dcatapit.json")
+    val stream_dataschema = getClass.getResourceAsStream("/dataschema/stdSchema/std-dataschema.json")
+
+    val json_operational = try {  Json.parse(stream_operational) } finally { stream_operational.close() }
+    val json_dcatap =  try {  Json.parse(stream_dcatap) } finally { stream_dcatap.close() }
+    val json_dataschema = try {  Json.parse(stream_dataschema) } finally { stream_dataschema.close() }
     
     val json: JsValue = Json.obj(
         "ops" -> json_operational,

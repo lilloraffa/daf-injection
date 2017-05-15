@@ -10,7 +10,8 @@ object JsonMgmt {
     val json = try {  Json.parse(stream) } finally { stream.close() }
     json
   }
-  
+
+
   def jsonRec(json: JsValue, nestFields: Seq[String]) = {
     def jsonRecFunc(obj: JsValue, accumulator: Integer): JsValue = {
       if (accumulator == (nestFields.length - 1)) {
