@@ -6,15 +6,16 @@
   "location":
   [
     {
-      "lat": 42.833333,
-      "lon": 12.833333
+      "lat": 45.07049,
+      "lon": 7.68682
     }
-  ],
-  "input_src": [
+  ]
+  },
+  "input_src":
     {
       "ing_type": "pull",
       "src_type": "csv",
       "url": "156.54.180.185/ftp/torino/gtfs_agency.txt"
     }
-  ]
+
 }
