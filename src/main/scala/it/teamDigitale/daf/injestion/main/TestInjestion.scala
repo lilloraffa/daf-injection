@@ -11,52 +11,43 @@ object TestInjestion extends App {
   val dataDir = config.getString("Inj-properties.sftpBasePath")
   val dataDirDone = config.getString("Inj-properties.sftpBasePathDone")
   val dataDirNoproc = config.getString("Inj-properties.sftpBasePathNoProc")
-  
-  //val dataDir = "/Users/lilloraffa/Development/data/daf_injftp"
-  //val dataDirDone = "/Users/lilloraffa/Development/data/daf_injftp/done/"
-  //val dataDirNoproc = "/Users/lilloraffa/Development/data/daf_injftp/noproc/"
-  
-  
+
   val fileOps = new FileOps
   val dirList = fileOps.getListOfDir(dataDir)
-  
-  
+
+
   for (dir <- dirList) {
     val owner = dir.getName
-    val csvList: List[File] = fileOps.getListOfFiles(dir.getPath())
-    
-    println(dir.getPath())
-    
+    val csvList: List[File] = fileOps.getListOfFiles(dir.getPath)
+
+    println(dir.getPath)
+
     csvList.foreach{
-        
+
         file => {
-          
-          val fileName = file.getName()
-          
+
+          val fileName = file.getName
+
           val nameDataset = fileName.split('.')(0)
           println("Processing " + fileName + " ...")
           println("NameDataset " + nameDataset + " ...")
-          
-          (new ConvSchemaGetter(nameDataset = Some(nameDataset), 
-            owner = Some(owner),
-            dataPath = Some(file.getPath())
-          //dataPath = Some(dataFilePath)
-          )).getSchema() match {
-            case Some(convSchema) => {
+
+          ConvSchemaGetter.getSchema() match {
+            case Some(convSchema) =>
               val injestion = new DataInjCsv(new SchemaMgmt(convSchema))
               injestion.doInj()
               //Spostare il file in folder .done
-            }
-            case _ => {
+
+            case _ =>
               println("Error - Exit")
               //Spostare il file in folder .NoProc
               //sys.exit(1)
-            }
+
           }
         }
-        
+
     }
-    
+
   }
 
 }

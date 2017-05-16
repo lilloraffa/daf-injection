@@ -1,98 +1,45 @@
 package it.teamDigitale.daf.schema.schemaMgmt
 
-import play.api.libs.json._
-import org.mongodb.scala._
-import org.mongodb.scala.model.Filters._
-import org.mongodb.scala.model.Sorts._
-import org.mongodb.scala.model.Updates._
-import org.mongodb.scala.bson.codecs.Macros._
-import it.teamDigitale.daf.utils.MongoMgmt
-import it.teamDigitale.daf.utils.HelperMongo._
-import it.teamDigitale.daf.schema.StdSchema
-import it.teamDigitale.daf.utils.JsonMgmt
+import it.teamDigitale.daf.datastructures.Model._
+import it.teamDigitale.daf.datastructures.StdSchema
+import it.teamDigitale.daf.utils.JsonConverter
+import org.apache.logging.log4j.scala.Logging
+
+import scala.util.{Failure, Success, Try}
 
 
-class StdSchemaGetter(schemaName: String) extends SchemaGetter[StdSchema]{
+/**
+  * This class is just for test, it should be removed.
+  * Generate the StdSchema extracted from json files in /resources/stdSchema
+  *
+  * @param uri contains the uri that should return all informations related to the StdSchema.
+  */
+class StdSchemaGetter(uri: String) extends SchemaGetter[StdSchema] with Logging {
   def getSchema() = {
-    
-    //look for standard schema a StdSchema, by calling a given service.
-    //TODO - All the following are temporary and will be deleted once the API is ready
-    //val file_operational: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-operational.json"
-    //val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-dcatapit.json"
-    //val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/stdSchema/std-dataschema.json"
+    val stream_operational = getClass.getResourceAsStream("/stdSchema/std-operational.json")
+    val stream_dcatap = getClass.getResourceAsStream("/stdSchema/std-dcatapit.json")
+    val stream_dataschema = getClass.getResourceAsStream("/stdSchema/std-dataschema.json")
 
-    val stream_operational = getClass.getResourceAsStream("/dataschema/stdSchema/std-operational.json")
-    val stream_dcatap = getClass.getResourceAsStream("/dataschema/stdSchema/std-dcatapit.json")
-    val stream_dataschema = getClass.getResourceAsStream("/dataschema/stdSchema/std-dataschema.json")
+    val classDataSchema = Try(JsonConverter.fromJson[DatasetSchema](stream_dataschema))
+    val classDataDcatapit = Try(JsonConverter.fromJson[DcatapitInfo](stream_dcatap))
+    val classDataOperational = Try(JsonConverter.fromJson[OperationalInfo](stream_operational))
 
-    val json_operational = try {  Json.parse(stream_operational) } finally { stream_operational.close() }
-    val json_dcatap =  try {  Json.parse(stream_dcatap) } finally { stream_dcatap.close() }
-    val json_dataschema = try {  Json.parse(stream_dataschema) } finally { stream_dataschema.close() }
-    
-    val json: JsValue = Json.obj(
-        "ops" -> json_operational,
-        "dataschema" -> json_dataschema,
-        "dcatap" -> json_dcatap
-    )
-    
-    //Put a check in case the read is not good
-    val stdSchema = StdSchema (
-        name = getString(json, "name").getOrElse(""),
-        nameDataset = getString(json, "dataset_name").getOrElse(""),
-        uri = getString(json, "uri").getOrElse(""),
-        stdSchemaName = "",
-        theme = getString(json, "theme").getOrElse(""), 
-        cat = getCat(json, "cat"),
-        groupOwn = getString(json, "group_own").getOrElse("open"),
-        owner = getString(json, "owner").getOrElse(""),
-        //src = getMap(json, "input_src").getOrElse(Map()),
-        //fields = getFields(json, "fields").getOrElse(JsArray()),
-        dataSchema = getDataSchema(json, "data_schema")
-    )
-    
-    Some(stdSchema)
-    
-  }
-  
-  
-  def getSchemaMongo() = {
-    
-    //val codecRegistry = fromRegistries(fromProviders(classOf[ConvSchema]), DEFAULT_CODEC_REGISTRY)
-    try{
-      val mongo: MongoMgmt = new MongoMgmt()
-      val db = mongo.getDatabase("daf")
-      //.withCodecRegistry(codecRegistry)
-      val collection: MongoCollection[Document] = db.getCollection("stdSchema")
-      
-      
-      
-      val res = collection.find(equal("std_schema", schemaName)).first().results()(0)
-      val json: JsValue = Json.parse(res.toJson)
-      println(json)
-      /*
-      val stdSchema = StdSchema (
-          name = getString(json, "name").getOrElse(""),
-          stdSchemaName = getString(json, "std_schema").getOrElse(""),
-          uri = "",
-          //nameDataset = getString(json, "name_dataset", normalize=true).getOrElse(""),
-          cat = getCat(json, "cat").getOrElse(Seq()),
-          groupOwn = getGroupOwn(json, "group_own"),
-          owner = getString(json, "owner").getOrElse(""),
-          src = getSrc(json, "src").getOrElse(Map()),
-          fields = getFields(json, "fields").getOrElse(JsArray())
-      )
-      
-      Some(stdSchema)
-      * 
-      */
-      None
-    } catch {
-      case _: Throwable => {
-        println("Exception in ConvSchemaGetter!")
+    val res: Try[Schema] = for {
+      ds <- classDataSchema
+      dcatapitInfo <- classDataDcatapit
+      operationalInfo <- classDataOperational
+    } yield Schema(ds, dcatapitInfo, operationalInfo)
+
+    res match {
+      case Success(schema) =>
+        Some(schema.convertToStdSchema())
+      case Failure(ex) => logger.error(ex.getMessage)
         None
-      }
     }
-    
+
   }
+  
+  
+
 
 }

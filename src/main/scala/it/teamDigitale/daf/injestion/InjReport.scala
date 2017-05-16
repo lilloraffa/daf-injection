@@ -4,7 +4,7 @@ case class InjReport (
     uri: String = "-1",
     url: String = "-1",
     stdSchemaUri: Option[String] = None,
-    isStd: Option[Boolean] = None,
+    isStd: Boolean = false,
     isInStd: Boolean = false,
     isOrd: Boolean = false,
     isRaw: Boolean = false,

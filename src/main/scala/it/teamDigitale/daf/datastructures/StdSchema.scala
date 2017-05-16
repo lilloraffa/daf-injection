@@ -1,21 +1,6 @@
-package it.teamDigitale.daf.schema
+package it.teamDigitale.daf.datastructures
 
-import it.teamDigitale.daf.datastructures.DataSchema.DatasetSchema
-import it.teamDigitale.daf.datastructures.StandardSchema.StdDatasetSchema
-
-//case class StdSchema (
-//    name: String,
-//    nameDataset: String,
-//    uri: String,
-//    stdSchemaName: String,  //to be deleted
-//    theme: String,
-//    cat: Option[Seq[String]],
-//    groupOwn: String,
-//    owner: String,
-//    //src: Map[String, String],
-//    //fields: JsArray,  //to be deleted
-//    dataSchema: DataSchema2
-//)
+import it.teamDigitale.daf.datastructures.Model.DatasetSchema
 
 case class StdSchema (
                        name: String = "",
