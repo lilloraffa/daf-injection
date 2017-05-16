@@ -1,11 +1,14 @@
 name := "Injection Module"
-version := "1.0"
+version := "0.1.0"
+organization := "it.teamdigitale"
+
 scalaVersion := "2.11.8"
 
 
 resolvers ++= Seq(
   "Cloudera Repository" at "https://repository.cloudera.com/artifactory/cloudera-repos/"
 )
+
 lazy val sparkVersion = "2.1.0.cloudera1"
 lazy val spark = "org.apache.spark"
 lazy val jacksonVersion = "2.8.8"
