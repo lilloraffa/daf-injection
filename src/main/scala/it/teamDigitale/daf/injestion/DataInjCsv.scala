@@ -17,6 +17,7 @@ import org.apache.logging.log4j.scala.Logging
 import org.apache.logging.log4j.Level
 import com.typesafe.config.ConfigFactory
 
+
 class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
   
   var isStdData = false  //change the logic!!!
@@ -32,6 +33,8 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
     val resultReport: InjReport = try{
       
 	    //Get the column names and the spark dataframe
+			println("ALEOOOOOOOOO")
+			println(schemaMgmt.convSchema.toString)
   		val dataFilePath = schemaMgmt.convSchema.src.get("url").getOrElse("")
   		val firstLine = TxtFile.firstLine(dataFilePath).getOrElse("-1")
   		val sep = TxtFile.csvGetSep(firstLine)
@@ -65,8 +68,9 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
 
     		saveStdDs(stdDf, schemaMgmt.convSchema, UriDataset(stdSchemaIn.uri))
   		}
-  		
-  		schemaMgmt.schemaReport match {
+
+
+			schemaMgmt.schemaReport match {
   		  
   		  
     		//StdSchema Exists and all the rest of the tests went ok
@@ -95,6 +99,7 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
               statusRaw = None
 	        )
   		  }
+
     		//It is an ordinary dataset, so it has no StdSchema associated with
     		case SchemaReport(
     		    _,  //hasInputDataSchema

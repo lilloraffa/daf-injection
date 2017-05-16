@@ -1,14 +1,17 @@
-import it.teamDigitale.daf.schema.schemaMgmt.{ConvSchemaGetter, StdSchemaGetter, MetadataLU, SchemaMgmt}
+import it.teamDigitale.daf.schema.schemaMgmt.{ConvSchemaGetter, MetadataLU, SchemaMgmt, StdSchemaGetter}
 import it.teamDigitale.daf.schema.{ConvSchema, StdSchema}
-import it.teamDigitale.daf.injestion.DataInjCsv
-import java.io.FileInputStream
+import it.teamDigitale.daf.injestion.{DataInjCsv, InjReport}
+import java.io.{FileInputStream, InputStream}
+
 import play.api.libs.json._
+
 import scala.annotation.tailrec
 import it.teamDigitale.daf.utils.JsonMgmt
 import org.apache.logging.log4j.scala.Logging
 import org.apache.logging.log4j.Level
 import com.typesafe.config.ConfigFactory
-import scala.util.{Try, Success, Failure}
+
+import scala.util.{Failure, Success, Try}
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.DataFrame
@@ -16,6 +19,10 @@ import org.apache.spark.sql.{Column, Row}
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
+
+import scala.concurrent.Future
+import scala.io.BufferedSource
+
 
 
 object TestSchemaMgmt extends App with Logging {
@@ -111,7 +118,18 @@ object TestSchemaMgmt extends App with Logging {
   //val file_dcatap: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dcatapit.json"
   //val file_dataschema: String = "/Users/lilloraffa/Development/teamdgt/daf/datamgmt_v2/example/data-dataschema.json"
 
+  val url = "http://localhost:9000/catalog-manager/v1/dataset-catalogs/dsadasda"
+  val result = scala.io.Source.fromURL(url).mkString
 
+  val metaCatalog = Json.parse(result)
+
+  val dataschema = (metaCatalog \ "dataschema").get
+  val operational = (metaCatalog \ "operational").get
+  val dacatap = (metaCatalog \ "dcatapit").get
+
+  println(Json.stringify(dataschema))
+  println(Json.stringify(operational))
+  println(Json.stringify(dacatap))
 
   val stream_operational = getClass.getResourceAsStream("/dataschema/data-operational.json")
   val stream_dcatap = getClass.getResourceAsStream("/dataschema/data-dcatapit.json")
@@ -125,29 +143,38 @@ object TestSchemaMgmt extends App with Logging {
   
   //val stream_dataschema = new FileInputStream(file_dataschema)
   val json_dataschema = try {  Json.parse(stream_dataschema) } finally { stream_dataschema.close() }
-  
-  val json: JsValue = Json.obj(
-      "ops" -> json_operational,
-      "dataschema" -> json_dataschema,
-      "dcatap" -> json_dcatap
-  )
-  
 
-  
-  
+  //val json: JsValue = Json.obj(
+  //  "ops" -> json_operational,
+  //  "dataschema" -> json_dataschema,
+  //  "dcatap" -> json_dcatap
+ // )
+
+  val json = Json.obj(
+      "ops" -> operational,
+      "dataschema" -> dataschema,
+      "dcatap" -> dacatap
+  )
+
   val convSchema = (new ConvSchemaGetter(
-      metadataJson = Some(json)
-      )
-  ).getSchema()
-  
-  println(convSchema)
-  
+    metadataJson = Some(json)
+  )
+    ).getSchema()
+
+  //println(convSchema)
+
   val stdSchema = (new StdSchemaGetter("daf://dataset/vid/mobility/gtfs_agency")).getSchema()
-  println(stdSchema)
-  
+  //println(stdSchema)
+  implicit val injReportFormat = Json.format[InjReport]
+
+
   convSchema match {
     case Some(s) => {
       val dataInj = new DataInjCsv(new SchemaMgmt(s))
+      val report = dataInj.doInj()
+      val reportJson = Json.toJson(report)
+      println("REPORT ALE: ")
+      println(Json.stringify(reportJson))
       println(dataInj.doInj())
     }
     case _ => println("ERROR")
