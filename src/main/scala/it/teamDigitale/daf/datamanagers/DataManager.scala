@@ -23,11 +23,11 @@ class DataManager(uriCatalog: String) extends Logging{
 
 
   /**
-    * @param uri to query
+    * @param uriDataset to query
     * @return schema associated to the input uri
     */
-  def getSchemaFromUri(uri: String): Try[Schema] = {
-    lazy val request = s"$uriCatalog/$uri" // s"http://$ipCatalog/catalog-manager/v1/dataset-catalogs/$uri"
+  def getSchemaFromUri(uriDataset: String): Try[Schema] = {
+    lazy val request = s"$uriCatalog/$uriDataset" // s"http://$ipCatalog/catalog-manager/v1/dataset-catalogs/$uri"
     //TODO send http request from the web server
     val httpRequest = getDatafromHttp(request)
 
