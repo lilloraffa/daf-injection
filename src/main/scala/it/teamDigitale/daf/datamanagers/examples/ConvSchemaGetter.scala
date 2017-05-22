@@ -1,14 +1,14 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.datamanagers.examples
 
-import it.teamDigitale.daf.datastructures.Model.{DatasetSchema, DcatapitInfo, OperationalInfo, Schema}
 import it.teamDigitale.daf.datastructures.ConvSchema
+import it.teamDigitale.daf.datastructures.Model.{DatasetSchema, DcatapitInfo, OperationalInfo, Schema}
 import it.teamDigitale.daf.utils.JsonConverter
-
-import scala.util.{Failure, Success, Try}
 import org.apache.logging.log4j.scala.Logging
 
+import scala.util.{Failure, Success, Try}
+
 /**
-  * This class is just for test, it should be removed.
+  * This class is just for test.
   * Generate the ConvSchema extracted from json files in /resources/stdSchema
   */
 object ConvSchemaGetter extends SchemaGetter[ConvSchema] with Logging{

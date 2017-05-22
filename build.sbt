@@ -26,6 +26,8 @@ libraryDependencies ++= Seq(
   "com.databricks" %% "spark-csv" % "1.5.0",
   "com.typesafe" % "config" % "1.0.2",
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+  "org.specs2" %% "specs2-mock" % "3.8.9" % "test",
+  "org.specs2" %% "specs2-core" % "3.8.9" % "test",
   //JSON Library
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion

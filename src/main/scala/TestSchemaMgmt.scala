@@ -1,5 +1,5 @@
-import it.teamDigitale.daf.schema.schemaMgmt.{ConvSchemaGetter, StdSchemaGetter, SchemaMgmt}
-
+import it.teamDigitale.daf.datamanagers.examples.{ConvSchemaGetter, StdSchemaGetter}
+import it.teamDigitale.daf.schema.schemaMgmt.SchemaMgmt
 import it.teamDigitale.daf.injestion.DataInjCsv
 import org.apache.logging.log4j.scala.Logging
 

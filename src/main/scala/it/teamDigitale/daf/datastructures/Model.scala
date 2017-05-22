@@ -5,7 +5,7 @@ package it.teamDigitale.daf.datastructures
   */
 object Model {
 
-  case class Schema(ds: DatasetSchema, dcatapit: DcatapitInfo, operational: OperationalInfo) {
+  case class Schema(dataschema: DatasetSchema, dcatapit: DcatapitInfo, operational: OperationalInfo) {
     //case class Schema(ds: DatasetSchema, dcatapit: DcatapitInfo, operational: OperationalInfo) {
     /**
       * Used to semplify the access to the most usefull data
@@ -22,7 +22,7 @@ object Model {
         groupOwn = operational.group_own,
         owner = dcatapit.`dct:rightsHolder`.`val`,
         src = operational.input_src,
-        dataSchema = ds,
+        dataSchema = dataschema,
         stdSchemaUri = Option(operational.std_schema.std_uri),
         reqFields = operational.std_schema.fields_conv,
         custFields = Seq() // TODO da togliere o popolare
@@ -33,20 +33,20 @@ object Model {
 
       StdSchema(
         name = dcatapit.`dct:title`.`val`,
-        nameDataset = ds.name,
+        nameDataset = dataschema.name,
         uri = operational.uri.getOrElse(throw new RuntimeException("No uri associated to this schema")),
         theme = dcatapit.`dcat:theme`.`val`,
         cat = dcatapit.`dct:subject`.map(x => x.`val`),
         groupOwn = operational.group_own,
         owner = dcatapit.`dct:rightsHolder`.`val`,
-        dataSchema = ds
+        dataSchema = dataschema
       )
     }
   }
 
   case class Semantics(`@id`: String, `@context`: List[String])
   case class Metadata(
-                       required: Double = 1L,
+                       required: Double = 1D,
                        desc: String,
                        field_type: String,
                        cat: String,

@@ -1,5 +1,6 @@
 package it.teamDigitale.daf.schema.schemaMgmt
 
+import it.teamDigitale.daf.datamanagers.examples.StdSchemaGetter
 import it.teamDigitale.daf.datastructures.Model.DatasetSchema
 import it.teamDigitale.daf.datastructures.{ConvSchema, StdSchema}
 import org.apache.logging.log4j.scala.Logging
@@ -100,24 +101,6 @@ class SchemaMgmt(val convSchema: ConvSchema, inputSchema: Option[DatasetSchema]=
 
 
 
-    /*
-    //TODO this should be eliminated
-    def verGetSchema(stdSchema: StdSchema, convReqFields: List[Map[String, String]]): (Boolean, List[Map[String, String]], List[Map[String, String]]) = {
-
-      val stdFields = stdSchema.fields.value.map(x => ((x \ "name").as[String], (x \ "required").as[Int]))
-
-      val inStdFields = convReqFields.map(x => x("field_std"))
-      val reqStdFields = stdFields.filter(x => x._2==1).map(x => x._1)
-      val optStdFields = stdFields.filter(x => x._2==0).map(x => x._1)
-
-      val reqStdConvSchema = convReqFields.filter(x => reqStdFields.contains(x("field_std")))
-      val optStdConvSchema = convReqFields.filter(x => optStdFields.contains(x("field_std")))
-
-      val testStdField = verifySchema(inStdFields, stdFields)
-
-      (testStdField, reqStdConvSchema, optStdConvSchema)
-    }
-    */
     /*
      * Function that checks if a list of fields in input complies with a defined schema.
      * It can be applied to check if a ConvSchema complies with the associated StdSchema,

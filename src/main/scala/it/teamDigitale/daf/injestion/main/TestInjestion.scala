@@ -1,10 +1,12 @@
 package it.teamDigitale.daf.injestion.main
 
 import it.teamDigitale.daf.injestion.DataInjCsv
-import it.teamDigitale.daf.schema.schemaMgmt.{ConvSchemaGetter, SchemaMgmt}
+import it.teamDigitale.daf.schema.schemaMgmt.SchemaMgmt
 import it.teamDigitale.daf.utils.FileOps
 import java.io.File
+
 import com.typesafe.config.ConfigFactory
+import it.teamDigitale.daf.datamanagers.examples.ConvSchemaGetter
 
 object TestInjestion extends App {
   var config = ConfigFactory.load()

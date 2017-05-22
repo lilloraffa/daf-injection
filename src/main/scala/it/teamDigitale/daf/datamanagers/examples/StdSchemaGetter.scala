@@ -1,4 +1,4 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.datamanagers.examples
 
 import it.teamDigitale.daf.datastructures.Model._
 import it.teamDigitale.daf.datastructures.StdSchema
@@ -9,7 +9,7 @@ import scala.util.{Failure, Success, Try}
 
 
 /**
-  * This class is just for test, it should be removed.
+  * This class is just for test.
   * Generate the StdSchema extracted from json files in /resources/stdSchema
   *
   * @param uri contains the uri that should return all informations related to the StdSchema.

@@ -1,10 +1,10 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.datamanagers.examples
 
 import org.apache.logging.log4j.scala.Logging
 
 
 //TxtMgmt.normString(s)
-
+// TODO we should rewrite this trait
 trait SchemaGetter[C] extends Logging {
   def getSchema(): Option[C]
   
