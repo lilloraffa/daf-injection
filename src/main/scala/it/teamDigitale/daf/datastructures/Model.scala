@@ -64,6 +64,7 @@ object Model {
       )
 
     }
+
   }
 
   case class Semantics(`@id`: String, `@context`: List[String])
