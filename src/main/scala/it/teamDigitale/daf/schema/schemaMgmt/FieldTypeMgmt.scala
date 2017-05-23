@@ -2,6 +2,7 @@ package it.teamDigitale.daf.schema.schemaMgmt
 
 import org.apache.spark.sql.types._
 
+@Deprecated
 object FieldTypeMgmt {
   def convAvro2Spark(typeCol: String): DataType = {
     

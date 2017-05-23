@@ -1,5 +1,6 @@
 package it.teamDigitale.daf.schema.schemaMgmt
 
+@Deprecated
 case class SchemaReport (
       hasInputDataSchema: Boolean,
       hasStdSchema: Boolean,

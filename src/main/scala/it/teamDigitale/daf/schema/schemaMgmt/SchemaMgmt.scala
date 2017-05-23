@@ -11,6 +11,7 @@ import org.apache.logging.log4j.scala.Logging
   * @param inputSchema None se non vengono aggiunti i dati, Some se vengono aggiunti i dati e in quel caso bisogna confrontare convSchemaIn.dataSchema con inputSchema.get
   */
 //class SchemaMgmt(convSchemaIn: ConvSchema, inputSchema: Option[DataSchema]= None)  extends Serializable with Logging {
+@Deprecated
 class SchemaMgmt(val convSchema: ConvSchema, inputSchema: Option[DatasetSchema]= None)  extends Serializable with Logging {
 
   val stdSchema: Option[StdSchema]  = extractSchema(convSchema.stdSchemaUri)

@@ -9,11 +9,12 @@ import org.apache.spark.sql.{Column, Row}
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
-import it.teamDigitale.daf.uri.UriDataset
+import it.teamDigitale.daf.datastructures.uri.UriDataset
 import it.teamDigitale.daf.schema.schemaMgmt.FieldTypeMgmt
 import org.apache.logging.log4j.scala.Logging
 import org.apache.logging.log4j.Level
 import com.typesafe.config.ConfigFactory
+import it.teamDigitale.daf.datastructures.Model.DatasetType
 import it.teamDigitale.daf.datastructures.{ConvSchema, StdSchema}
 
 class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
@@ -71,9 +72,9 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
     		//StdSchema Exists and all the rest of the tests went ok
     		case SchemaReport(
     		    _,  //hasInputDataSchema
-    		    true,  //hasStdSchema
-    		    true,  //checkStdSchema
-    		    true   //checkInSchema
+    		    true,  //hasStdSchema verifica se ha uno standard schema associato
+    		    true,  //checkStdSchema  verifica coerenza tra stdschema e ordschema
+    		    true   //checkInSchema verifica coerenza tra lo schema del convSchema e lo schema del dataset da inserire
     		) =>
 	        //TODO do the checks based on the content of the df
     		  val uriDs = getUriDs(schemaMgmt.convSchema, "ord")
@@ -165,7 +166,7 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
 
       case (None, true) => UriDataset(
             domain = "daf",
-            typeDs = "std",
+            typeDs = DatasetType.withNameOpt("std").get,
             groupOwn = convSchema.groupOwn,
             owner = convSchema.owner,
             theme = convSchema.theme,
@@ -177,7 +178,7 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
         val typeDs = if (typeDsIn.equals("ord") || typeDsIn.equals("raw")) typeDsIn else "raw"
         UriDataset(
             domain = "daf",
-            typeDs = typeDs,
+            typeDs = DatasetType.withNameOpt(typeDs).get,
             groupOwn = convSchema.groupOwn,
             owner = convSchema.owner,
             theme = convSchema.theme,

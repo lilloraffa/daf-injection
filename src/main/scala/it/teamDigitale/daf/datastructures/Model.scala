@@ -1,5 +1,7 @@
 package it.teamDigitale.daf.datastructures
 
+import it.teamDigitale.daf.datastructures.uri.UriDataset
+
 import scala.util.Try
 
 /**
@@ -25,8 +27,8 @@ object Model {
         owner = dcatapit.dct_rightsHolder.`val`.getOrElse("ERROR"),
         src = operational.input_src,
         dataSchema = dataschema,
-        stdSchemaUri = Option(operational.std_schema.std_uri),
-        reqFields = operational.std_schema.fields_conv,
+        stdSchemaUri = Option(operational.std_schema.get.std_uri),
+        reqFields = operational.std_schema.get.fields_conv,
         custFields = Seq() // TODO da togliere o popolare
       )
     }
@@ -43,6 +45,24 @@ object Model {
         owner = dcatapit.dct_rightsHolder.`val`.getOrElse("ERROR"),
         dataSchema = dataschema
       )
+    }
+
+    def convertToUriDataset() = Try {
+
+      val typeDs = if (operational.is_std)
+        DatasetType.STANDARD
+      else
+        DatasetType.ORDINARY
+
+      UriDataset(
+        domain = "daf",
+        typeDs = typeDs,
+        groupOwn = operational.group_own,
+        owner = dcatapit.dct_rightsHolder.`val`.getOrElse("NO_OWNER"),
+        theme = dcatapit.dcat_theme.`val`.getOrElse("NO_THEME"),
+        nameDs = dataschema.name
+      )
+
     }
   }
 
@@ -142,10 +162,10 @@ object Model {
     * @param input_src
     */
   case class OperationalInfo(
-                             var uri: Option[String],
+                             uri: Option[String],
                              is_std: Boolean = false,
                              group_own: String,
-                             std_schema: Std_schema,
+                             std_schema: Option[Std_schema],
                              read_type: String,
                              georef: List[Location]= List(),
                              input_src: Input_src
@@ -153,8 +173,11 @@ object Model {
 
 
   object DatasetType extends Enumeration {
-    type ds_type = Value
-    val STANDARD, ORDINARY, RAW = Value
+    val STANDARD = Value("std")
+    val ORDINARY = Value("ord")
+    val RAW = Value("raw")
+
+    def withNameOpt(s: String): Option[Value] = values.find(_.toString == s)
   }
 }
 

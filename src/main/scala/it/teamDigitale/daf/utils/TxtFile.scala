@@ -3,7 +3,7 @@ package it.teamDigitale.daf.utils
 object TxtFile {
 
   def firstLine(filePath: String): Option[String] = {
-    val src = scala.io.Source.fromFile(filePath)
+    val src = scala.io.Source.fromFile(filePath)//.getLines().next()
     try {
       src.getLines.find(_ => true)
     } finally {

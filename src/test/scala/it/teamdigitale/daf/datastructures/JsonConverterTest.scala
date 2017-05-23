@@ -33,7 +33,7 @@ class JsonConverterTest extends FunSuite with Logging{
     logger.info(classDataOperational)
 
     val schema = Schema(classDataSchema.get, classDataDcatapit.get, classDataOperational.get)
-    val convSchema = schema.convertToConvSchema()
+    val convSchema = schema.convertToConvSchema().get
     assert(convSchema.uri.isEmpty)
     assert(convSchema.name == "GTFS Agency" )
     assert(!convSchema.isStd)

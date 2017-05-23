@@ -1,6 +1,5 @@
 import com.typesafe.config.ConfigFactory
-import it.teamDigitale.daf.datamanagers.DataManager
-import it.teamDigitale.daf.schema.schemaMgmt.CoherenceChecker
+import it.teamDigitale.daf.schema.schemaMgmt.{CoherenceChecker, SchemaManager}
 import org.apache.logging.log4j.scala.Logging
 
 import scala.util.{Failure, Success}
@@ -12,7 +11,7 @@ object TestWorkflow extends App with Logging{
 
   val uri = ConfigFactory.load().getString("WebServices.catalogUrl")
 
-  val dm = new DataManager(uri)
+  val dm = new SchemaManager(uri)
   val tryschema = dm.getSchemaFromUri("1")
 
   val convSchema = for{
@@ -33,9 +32,12 @@ object TestWorkflow extends App with Logging{
   stdSchema match {
     case Success(schema) => println(schema)
     case Failure(ex) =>
-      logger.error(s"ERROR ${ex.getMessage}")
-      logger.error(ex.getStackTrace.mkString("\n\t"))
+      //if the stdSchema does not contains the uri throws an exception
+      logger.info(s"ERROR ${ex.getMessage}")
+      logger.info(ex.getStackTrace.mkString("\n\t"))
   }
+
+
 
 
 }

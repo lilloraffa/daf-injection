@@ -16,7 +16,7 @@ object CoherenceChecker {
     * @param convSchema
     * @param stdSchema
     */
-  def checkCoherenceSchemas(convSchema: ConvSchema, stdSchema: StdSchema) = {
+  def checkCoherenceSchemas(convSchema: ConvSchema, stdSchema: StdSchema): Boolean = {
     val reqStdFields: Seq[String] = stdSchema.dataSchema
       .fields
       .filter(_.metadata.required == 1D)
@@ -34,7 +34,7 @@ object CoherenceChecker {
     * @param schema
     * @return
     */
-  def checkCoherenceDataSchema(datasetSchema: DatasetSchema, schema: Schema) = ???
+  def checkCoherenceDataSchema(datasetSchema: DatasetSchema, schema: Schema): Boolean = true
 
 
 

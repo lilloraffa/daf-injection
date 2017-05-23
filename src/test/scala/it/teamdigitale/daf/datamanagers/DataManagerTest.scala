@@ -1,7 +1,7 @@
 package it.teamdigitale.daf.datamanagers
 
 import com.typesafe.config.ConfigFactory
-import it.teamDigitale.daf.datamanagers.DataManager
+import it.teamDigitale.daf.schema.schemaMgmt.SchemaManager
 import org.apache.logging.log4j.scala.Logging
 import org.mockito.stubbing.OngoingStubbing
 import org.specs2.mock.Mockito
@@ -250,7 +250,7 @@ class DataManagerTest extends Specification with Mockito with Logging {
 
  "A DataManager" should  {
    "returns a right schema mocking the httpRequest to the catalog manager" in {
-     val mockedDataManager = mock[DataManager]
+     val mockedDataManager = mock[SchemaManager]
      val pippo: OngoingStubbing[Try[String]] = mockedDataManager.getDatafromHttp(idDataset) returns Success(httpResponse)
      val s = mockedDataManager.getSchemaFromUri(idDataset)
      println(pippo)

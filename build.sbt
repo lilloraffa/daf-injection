@@ -30,9 +30,10 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "3.8.9" % "test",
   //JSON Library
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+  "com.databricks" %% "spark-avro" % "3.2.0"
   //"com.typesafe.play" %% "play-json" % playVersion exclude("com.fasterxml.jackson.core", "jackson-databind")
-  
+
 ) ++ dependencyToProvide()
 
 // Log4j
