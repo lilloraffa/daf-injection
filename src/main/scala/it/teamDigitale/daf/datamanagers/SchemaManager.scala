@@ -41,9 +41,18 @@ class DataManager(uriCatalog: String) extends Logging{
   def getDatafromHttp(url: String) = Try(scala.io.Source.fromURL(url).mkString)
 
   /**
-    *
+    * Bigogna definire la logica per l'uri
     * @param json
     * @return a schema parsing the input json
     */
-  def getSchemaFromJson(json: String): Try[Schema] = Try(JsonConverter.fromJson[Schema](json))
+  def getSchemaFromJson(json: String): Try[Schema] = {
+    val schema =Try(JsonConverter.fromJson[Schema](json))
+    schema.map{s =>
+      if(s.operational.uri.isEmpty)
+
+    }
+
+  }
+
+
 }

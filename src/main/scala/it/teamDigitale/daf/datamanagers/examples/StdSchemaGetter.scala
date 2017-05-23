@@ -32,7 +32,7 @@ class StdSchemaGetter(uri: String) extends SchemaGetter[StdSchema] with Logging 
 
     res match {
       case Success(schema) =>
-        Some(schema.convertToStdSchema())
+        Some(schema.convertToStdSchema().get)
       case Failure(ex) => logger.error(ex.getMessage)
         None
     }

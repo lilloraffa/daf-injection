@@ -30,7 +30,7 @@ object ConvSchemaGetter extends SchemaGetter[ConvSchema] with Logging{
     } yield Schema(ds, dcatapitInfo, operationalInfo)
 
     res match {
-      case Success(schema) => Some(schema.convertToConvSchema())
+      case Success(schema) => Some(schema.convertToConvSchema().get)
       case Failure(ex) => logger.error(ex.getMessage)
         None
     }

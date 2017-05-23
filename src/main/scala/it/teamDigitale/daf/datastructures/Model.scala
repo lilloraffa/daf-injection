@@ -1,5 +1,7 @@
 package it.teamDigitale.daf.datastructures
 
+import scala.util.Try
+
 /**
   * Created by fabiana on 15/05/17.
   */
@@ -12,15 +14,15 @@ object Model {
       * TODO it should be removed if it is not usefull
       * @return
       */
-    def convertToConvSchema() = {
+    def convertToConvSchema() = Try{
       ConvSchema(
         uri = operational.uri,
-        name = dcatapit.`dct:title`.`val`,
+        name = dcatapit.dct_title.`val`.getOrElse("ERROR"),
         isStd = operational.is_std,
-        theme = dcatapit.`dcat:theme`.`val`,
-        cat = dcatapit.`dct:subject`.map(x => x.`val`),
+        theme = dcatapit.dcat_theme.`val`.getOrElse("ERROR"),
+        cat = dcatapit.dct_subject.map(x => x.`val`.getOrElse("ERROR")),
         groupOwn = operational.group_own,
-        owner = dcatapit.`dct:rightsHolder`.`val`,
+        owner = dcatapit.dct_rightsHolder.`val`.getOrElse("ERROR"),
         src = operational.input_src,
         dataSchema = dataschema,
         stdSchemaUri = Option(operational.std_schema.std_uri),
@@ -29,16 +31,16 @@ object Model {
       )
     }
 
-    def convertToStdSchema() = {
+    def convertToStdSchema() = Try{
 
       StdSchema(
-        name = dcatapit.`dct:title`.`val`,
+        name = dcatapit.dct_title.`val`.getOrElse("ERROR"),
         nameDataset = dataschema.name,
         uri = operational.uri.getOrElse(throw new RuntimeException("No uri associated to this schema")),
-        theme = dcatapit.`dcat:theme`.`val`,
-        cat = dcatapit.`dct:subject`.map(x => x.`val`),
+        theme = dcatapit.dcat_theme.`val`.getOrElse("ERROR"),
+        cat = dcatapit.dct_subject.map(x => x.`val`.getOrElse("ERROR")),
         groupOwn = operational.group_own,
-        owner = dcatapit.`dct:rightsHolder`.`val`,
+        owner = dcatapit.dct_rightsHolder.`val`.getOrElse("ERROR"),
         dataSchema = dataschema
       )
     }
@@ -79,7 +81,8 @@ object Model {
 
 
   case class DctTitle(
-                       `val`: String
+                        it: Option[String]= None,
+                       `val`: Option[String] = None
                      )
   case class DcatTheme(
                         `@id`: String,
@@ -89,28 +92,18 @@ object Model {
   /**
     * Contains dcatapit info about a dataset
     * Automatically generated from /resources/dataschema/data-dcatapit
-    * @param `dct:identifier`
-    * @param `dct:title`
-    * @param `dct:description`
-    * @param `dcat:theme`
-    * @param `dct:rightsHolder`
-    * @param `dct:accrualPeriodicity`
-    * @param `dct:subject`
-    * @param `dct:language`
-    * @param `dcat:keyword`
-    * @param `dcat:spatial`
-    */
+   */
   case class DcatapitInfo(
-                             `dct:identifier`: String,
-                             `dct:title`: DctTitle,
-                             `dct:description`: DctTitle,
-                             `dcat:theme`: DctTitle,
-                             `dct:rightsHolder`: DctTitle,
-                             `dct:accrualPeriodicity`: DctTitle,
-                             `dct:subject`: List[DctTitle],
-                             `dct:language`: DctTitle,
-                             `dcat:keyword`: List[String],
-                             `dcat:spatial`: String
+                             dct_identifier: String,
+                             dct_title: DctTitle,
+                             dct_description: DctTitle,
+                             dcat_theme: DctTitle,
+                             dct_rightsHolder: DctTitle,
+                             dct_accrualPeriodicity: DctTitle,
+                             dct_subject: List[DctTitle],
+                             dct_language: DctTitle,
+                             dcat_keyword: List[String],
+                             dcat_spatial: String
                            )
 
 
@@ -145,21 +138,24 @@ object Model {
     * @param group_own
     * @param std_schema
     * @param read_type
-    * @param location
+    * @param georef
     * @param input_src
     */
   case class OperationalInfo(
-                             uri: Option[String],
+                             var uri: Option[String],
                              is_std: Boolean = false,
                              group_own: String,
                              std_schema: Std_schema,
                              read_type: String,
-                             location: List[Location],
+                             georef: List[Location]= List(),
                              input_src: Input_src
                            )
 
 
-
+  object DatasetType extends Enumeration {
+    type ds_type = Value
+    val STANDARD, ORDINARY, RAW = Value
+  }
 }
 
 
