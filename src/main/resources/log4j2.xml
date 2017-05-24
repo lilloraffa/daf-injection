@@ -3,7 +3,7 @@
 <Configuration status="WARN" monitorInterval="30" strict="true"
 	includeLocation="true">
 	<Properties>
-		<Property name="rolling">/Users/lilloraffa/Development/data/log/Injestion/log-inj.log</Property>
+		<Property name="rolling">log/Injestion/log-inj.log</Property>
 	</Properties>
 	<Appenders>
 		<Console name="Console" target="SYSTEM_OUT">

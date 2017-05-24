@@ -1,0 +1,6 @@
+agency_id,agency_name,agency_url,agency_timezone,agency_lang,agency_phone
+GTT,Gruppo Torinese Trasporti,http://www.gtt.to.it,Europe/Rome,it,800-019152
+GTT_E,GTT servizio extraurbano,http://www.gtt.to.it,Europe/Rome,it,800-019152
+GTT_F,Gruppo Torinese Trasporti,http://www.gtt.to.it,Europe/Rome,it,800-019152
+GTT_T,GTT Servizi Turistici,http://www.gtt.to.it,Europe/Rome,it,800-019152
+FS,Trenitalia,http://www.trenitalia.com,Europe/Rome,it,199-892021
