@@ -12,8 +12,8 @@ object TestWorkflow extends App with Logging{
 
   val uri = ConfigFactory.load().getString("WebServices.catalogUrl")
 
-  val dm = new SchemaManager(uri)
-  val tryschema = dm.getSchemaFromUri("1")
+  val dm = new SchemaManager
+  val tryschema = dm.getSchemaFromUri(uri, "1")
 
   val convSchema = for{
     schema <- tryschema
