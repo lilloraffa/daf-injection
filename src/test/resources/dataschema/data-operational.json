@@ -31,14 +31,14 @@
     ]
   },
   "read_type": "update",
-  "location":
+  "georef":
     [
       {
         "lat": 45.07049,
         "lon": 7.68682
       }
     ]
-  },
+  ,
   "input_src":
   {
     "ing_type": "pull",

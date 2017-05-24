@@ -1,7 +1,7 @@
 package it.teamDigitale.daf
 
 import it.teamDigitale.daf.datastructures.Model.Schema
-import it.teamDigitale.daf.schema.schemaMgmt.CoherenceChecker
+import it.teamDigitale.daf.schemamanager.CoherenceChecker
 import it.teamDigitale.daf.utils.TxtFile
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.{SparkConf, SparkContext}

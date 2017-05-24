@@ -1,5 +1,6 @@
 import com.typesafe.config.ConfigFactory
-import it.teamDigitale.daf.schema.schemaMgmt.{CoherenceChecker, SchemaManager}
+import it.teamDigitale.daf.schemamanager.CoherenceChecker
+import it.teamDigitale.daf.schemamanager.SchemaManager
 import org.apache.logging.log4j.scala.Logging
 
 import scala.util.{Failure, Success}

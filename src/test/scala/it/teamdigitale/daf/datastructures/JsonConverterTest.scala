@@ -62,6 +62,38 @@ class JsonConverterTest extends FunSuite with Logging{
 
   }
 
+  test("check Operational info string is correctly converted") {
+    val json =
+      """
+        |{
+        |  "uri": "daf://dataset/std/open/daf/trasposti/gtfs_agency",
+        |  "is_std": 1,
+        |  "group_own": "pippo",
+        |  "read_type": "update",
+        |  "location":
+        |  [
+        |    {
+        |      "lat": 45.07049,
+        |      "lon": 7.68682
+        |    }
+        |  ]
+        |  ,
+        |  "input_src":
+        |    {
+        |      "ing_type": "pull",
+        |      "src_type": "csv",
+        |      "url": "156.54.180.185/ftp/torino/gtfs_agency.txt"
+        |    }
+        |
+        |}
+        |
+      """.mkString.replace("\n", "").replace("|","").trim
+
+    val operational = JsonConverter.fromJson[OperationalInfo](json)
+    assert(operational.input_src.url != null)
+    assert(operational.group_own == "pippo")
+  }
+
   test("The jsons on stdSchema folder should be correctly converted in case classes"){
 
     val stream_operational: InputStream = getClass.getResourceAsStream("/stdSchema/std-operational.json")

@@ -1,4 +1,4 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.schemamanager
 
 import it.teamDigitale.daf.datastructures.Model.{DatasetType, Schema}
 import it.teamDigitale.daf.datastructures.uri.UriDataset
@@ -14,13 +14,13 @@ import scala.util.Try
   * Schema info are sent either via a web-form or by directly calling the catalogds/add/{info} API
   * (see the related doc for more info on the API).
   */
-class SchemaManager(uriCatalog: String) extends Logging {
+class SchemaManager extends Logging {
 
   /**
     * @param uriDataset to query
     * @return schema associated to the input uri
     */
-  def getSchemaFromUri(uriDataset: String): Try[Schema] = {
+  def getSchemaFromUri(uriCatalog: String, uriDataset: String): Try[Schema] = {
     lazy val request = s"$uriCatalog/$uriDataset"
     //TODO send http request from the web server
     val httpRequest = getDatafromHttp(request)

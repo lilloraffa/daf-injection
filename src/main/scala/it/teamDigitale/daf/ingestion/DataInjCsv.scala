@@ -1,7 +1,7 @@
-package it.teamDigitale.daf.injestion
+package it.teamDigitale.daf.ingestion
 
 import it.teamDigitale.daf.utils.TxtFile
-import it.teamDigitale.daf.schema.schemaMgmt.{SchemaMgmt, SchemaReport}
+import it.teamDigitale.daf.schemamanager.{SchemaMgmt, SchemaReport}
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.DataFrame
@@ -10,13 +10,13 @@ import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 import it.teamDigitale.daf.datastructures.uri.UriDataset
-import it.teamDigitale.daf.schema.schemaMgmt.FieldTypeMgmt
 import org.apache.logging.log4j.scala.Logging
 import org.apache.logging.log4j.Level
 import com.typesafe.config.ConfigFactory
 import it.teamDigitale.daf.datastructures.Model.DatasetType
 import it.teamDigitale.daf.datastructures.{ConvSchema, StdSchema}
-
+import it.teamDigitale.daf.schemamanager.{FieldTypeMgmt, SchemaMgmt}
+@Deprecated
 class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
 
   var isStdData = false  //change the logic!!!

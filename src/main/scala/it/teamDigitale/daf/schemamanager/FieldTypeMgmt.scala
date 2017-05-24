@@ -1,4 +1,4 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.schemamanager
 
 import org.apache.spark.sql.types._
 

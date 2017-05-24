@@ -1,4 +1,4 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.schemamanager
 
 import it.teamDigitale.daf.datamanagers.examples.StdSchemaGetter
 import it.teamDigitale.daf.datastructures.Model.DatasetSchema

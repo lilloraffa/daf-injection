@@ -1,6 +1,6 @@
 import it.teamDigitale.daf.datamanagers.examples.{ConvSchemaGetter, StdSchemaGetter}
-import it.teamDigitale.daf.schema.schemaMgmt.SchemaMgmt
-import it.teamDigitale.daf.injestion.DataInjCsv
+import it.teamDigitale.daf.ingestion.DataInjCsv
+import it.teamDigitale.daf.schemamanager.SchemaMgmt
 import org.apache.logging.log4j.scala.Logging
 
 object TestSchemaMgmt extends App with Logging {

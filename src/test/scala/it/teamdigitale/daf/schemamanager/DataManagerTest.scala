@@ -1,7 +1,7 @@
-package it.teamdigitale.daf.datamanagers
+package it.teamdigitale.daf.schemamanager
 
 import com.typesafe.config.ConfigFactory
-import it.teamDigitale.daf.schema.schemaMgmt.SchemaManager
+import it.teamDigitale.daf.schemamanager.SchemaManager
 import org.apache.logging.log4j.scala.Logging
 import org.mockito.stubbing.OngoingStubbing
 import org.specs2.mock.Mockito

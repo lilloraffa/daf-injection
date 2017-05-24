@@ -1,4 +1,4 @@
-package it.teamDigitale.daf.schema.schemaMgmt
+package it.teamDigitale.daf.schemamanager
 
 @Deprecated
 case class SchemaReport (

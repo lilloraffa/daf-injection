@@ -1,5 +1,5 @@
 {
-  "group_own": "open",
+  "group_own": "open_fabiana",
   "std_schema":
   {
     "std_uri": "daf://dataset/std/open/daf/trasposti/gtfs_agency",
@@ -30,8 +30,8 @@
       }
     ]
   },
-  "read_type": "update",
-  "location":
+  "read_type": "update_test",
+  "georef":
     [
       {
         "lat": 45.07049,

@@ -1,5 +1,6 @@
-package it.teamDigitale.daf.injestion
+package it.teamDigitale.daf.ingestion
 
+@Deprecated
 case class InjReport (
     uri: String = "-1",
     url: String = "-1",

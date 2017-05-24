@@ -1,14 +1,14 @@
-package it.teamDigitale.daf.injestion.main
+package it.teamDigitale.daf.ingestion
+
+import java.io.File
 
 import com.databricks.spark.avro.SchemaConverters
-import com.databricks.spark.avro.SchemaConverters.SchemaType
-import it.teamDigitale.daf.datastructures.ConvSchema
 import it.teamDigitale.daf.datastructures.Model.Schema
-import it.teamDigitale.daf.utils.TxtFile
+import org.apache.avro.Schema.Parser
 import org.apache.logging.log4j.scala.Logging
-import org.apache.spark.sql.{Column, DataFrame, SaveMode}
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, expr}
 import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.{DataFrame, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.util.{Failure, Success, Try}
@@ -16,18 +16,11 @@ import scala.util.{Failure, Success, Try}
 /**
   * Created by fabiana on 23/05/17.
   */
-class InjestionManager extends Logging {
+class IngestionManager extends Logging {
 
   val conf = new SparkConf().setAppName("Inj-csv").setMaster("local[2]")
   val sc = new SparkContext(conf)
   val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-
-  private def getPartitionList(schema: Schema): List[String] = {
-    //Standard case
-    if(schema.operational.is_std)
-      List("owner", "ts")
-    else List("ts")
-  }
 
 
   private def readCSV(path: String, sep: String = ",", isHeaderDefined: Boolean = true, customSchema: StructType) = Try {
@@ -40,11 +33,29 @@ class InjestionManager extends Logging {
       .load(path)
   }
 
-  private def writeDF(df:DataFrame, partitionList: List[String], filePath: String) = Try{
+  private def enrichDataFrame(df: DataFrame, schema: Schema) : (DataFrame, List[String]) = {
+    val timestamp: Long = System.currentTimeMillis / 1000
+    schema.operational.is_std match {
+      case true =>
+        val newdf = df.withColumn("owner", expr("'" + schema.dcatapit.dct_rightsHolder.`val` + "'"))
+          .withColumn("ts", expr("'" + timestamp + "'"))
+        val partitionList = List("owner", "ts")
+        (newdf, partitionList)
+      case false =>
+        val newdf = df.withColumn("ts", expr("'" + timestamp + "'"))
+        val partitionList = List("ts")
+        (newdf, partitionList)
+//      case DatasetType.RAW => //not yet implemented
+//        df
+    }
+  }
+
+  private def writeDF(df:DataFrame, schema: Schema, filePath: String) = Try{
+
+    val (enrichedDF, partitionList) = enrichDataFrame(df, schema)
 
     val repartitionList = partitionList.map(x => col(x))
-
-    df
+    enrichedDF
       .repartition(repartitionList:_*)  //questa riga ha un costo rilevante
       .write
       .partitionBy(partitionList:_*)
@@ -52,19 +63,22 @@ class InjestionManager extends Logging {
       .parquet(filePath + ".parquet")
   }
 
-  def write(avroSchema: org.apache.avro.Schema, schema: Schema, sep: String = ",", isHeaderDefined: Boolean = true) = {
+  def readAvroSchema(schemaLocation: String): org.apache.avro.Schema = {
+    new Parser().parse(new File(schemaLocation))
+  }
+
+  def write( schemaLocation: String, schema: Schema, sep: String = ",", isHeaderDefined: Boolean = true): Boolean = {
+
+    val avroSchema = readAvroSchema(schemaLocation)
 
     val inputPath = schema.operational.input_src.url
     val outputPath = schema.convertToUriDataset().get.getUrl()
 
-    val timestamp: Long = System.currentTimeMillis / 1000
-
     val customSchema: StructType = SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType]
-    val partitionList = getPartitionList(schema)
 
     val res = for {
       df <- readCSV(inputPath, sep, isHeaderDefined, customSchema)
-      out <- writeDF(df, partitionList, outputPath)
+      out <- writeDF(df, schema, outputPath)
     } yield out
 
 
@@ -73,7 +87,7 @@ class InjestionManager extends Logging {
        logger.info(s"Dataframe correctly stored in $outputPath")
         true
       case Failure(ex) =>
-        logger.error(s"Dataset reading failed due a Conversion Exception ${ex.getMessage}")
+        logger.error(s"Dataset reading failed due a Conversion Exception ${ex.getMessage} \n${ex.getStackTrace.mkString("\n\t")}")
         false
     }
   }

@@ -21,10 +21,10 @@ object Model {
         uri = operational.uri,
         name = dcatapit.dct_title.`val`.getOrElse("ERROR"),
         isStd = operational.is_std,
-        theme = dcatapit.dcat_theme.`val`.getOrElse("ERROR"),
-        cat = dcatapit.dct_subject.map(x => x.`val`.getOrElse("ERROR")),
+        theme = dcatapit.dcat_theme.`val`,
+        cat = dcatapit.dct_subject.map(x => x.`val`),
         groupOwn = operational.group_own,
-        owner = dcatapit.dct_rightsHolder.`val`.getOrElse("ERROR"),
+        owner = dcatapit.dct_rightsHolder.`val`,
         src = operational.input_src,
         dataSchema = dataschema,
         stdSchemaUri = Option(operational.std_schema.get.std_uri),
@@ -39,10 +39,10 @@ object Model {
         name = dcatapit.dct_title.`val`.getOrElse("ERROR"),
         nameDataset = dataschema.name,
         uri = operational.uri.getOrElse(throw new RuntimeException("No uri associated to this schema")),
-        theme = dcatapit.dcat_theme.`val`.getOrElse("ERROR"),
-        cat = dcatapit.dct_subject.map(x => x.`val`.getOrElse("ERROR")),
+        theme = dcatapit.dcat_theme.`val`,
+        cat = dcatapit.dct_subject.map(x => x.`val`),
         groupOwn = operational.group_own,
-        owner = dcatapit.dct_rightsHolder.`val`.getOrElse("ERROR"),
+        owner = dcatapit.dct_rightsHolder.`val`,
         dataSchema = dataschema
       )
     }
@@ -58,8 +58,8 @@ object Model {
         domain = "daf",
         typeDs = typeDs,
         groupOwn = operational.group_own,
-        owner = dcatapit.dct_rightsHolder.`val`.getOrElse("NO_OWNER"),
-        theme = dcatapit.dcat_theme.`val`.getOrElse("NO_THEME"),
+        owner = dcatapit.dct_rightsHolder.`val`,
+        theme = dcatapit.dcat_theme.`val`,
         nameDs = dataschema.name
       )
 
@@ -117,12 +117,12 @@ object Model {
   case class DcatapitInfo(
                              dct_identifier: String,
                              dct_title: DctTitle,
-                             dct_description: DctTitle,
-                             dcat_theme: DctTitle,
-                             dct_rightsHolder: DctTitle,
-                             dct_accrualPeriodicity: DctTitle,
-                             dct_subject: List[DctTitle],
-                             dct_language: DctTitle,
+                             dct_description: DcatTheme,
+                             dcat_theme: DcatTheme,
+                             dct_rightsHolder: DcatTheme,
+                             dct_accrualPeriodicity: DcatTheme,
+                             dct_subject: List[DcatTheme],
+                             dct_language: DcatTheme,
                              dcat_keyword: List[String],
                              dcat_spatial: String
                            )
@@ -163,7 +163,7 @@ object Model {
     * @param input_src
     */
   case class OperationalInfo(
-                             uri: Option[String],
+                             uri: Option[String] = None,
                              is_std: Boolean = false,
                              group_own: String,
                              std_schema: Option[Std_schema],
