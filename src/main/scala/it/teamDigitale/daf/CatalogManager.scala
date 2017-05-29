@@ -1,10 +1,11 @@
 package it.teamDigitale.daf
 
-import it.teamDigitale.daf.datastructures.Model.Schema
+import it.gov.daf.catalogmanagerclient.model.MetaCatalog
 import it.teamDigitale.daf.schemamanager.CoherenceChecker
 import it.teamDigitale.daf.utils.TxtFile
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.{SparkConf, SparkContext}
+import it.teamDigitale.daf.datastructures._
 
 import scala.util.{Failure, Success, Try}
 
@@ -14,16 +15,16 @@ import scala.util.{Failure, Success, Try}
 class CatalogManager() extends Logging{
 
 
-  def read(uri: String) : Try[Schema] = ???
-  def write(schema: Schema) : Boolean = {
+  def read(uri: String) : Try[MetaCatalog] = ???
+  def write(schema: MetaCatalog) : Boolean = {
 
-    if(schema.operational.std_schema.isDefined) {
-      val stdUri = schema.operational.std_schema.get.std_uri
+    if(schema.operational.stdSchema == 1 ) {
+      val stdUri = schema.operational.stdSchema.stdUri
 
       val checkSchema = for {
         schema2 <- read(stdUri)
-        convSchema <- schema.convertToConvSchema()
-        stdSchema <- schema2.convertToStdSchema()
+        convSchema <- convertToConvSchema(schema)
+        stdSchema <- convertToStdSchema(schema2)
       } yield CoherenceChecker.checkCoherenceSchemas(convSchema, stdSchema)
 
 

@@ -1,10 +1,11 @@
 package it.teamDigitale.daf.datamanagers.examples
 
+import it.gov.daf.catalogmanagerclient.model.{DatasetCatalog, DcatApIt, MetaCatalog, Operational}
 import it.teamDigitale.daf.datastructures.Model._
 import it.teamDigitale.daf.datastructures.StdSchema
 import it.teamDigitale.daf.utils.JsonConverter
 import org.apache.logging.log4j.scala.Logging
-
+import it.teamDigitale.daf.datastructures._
 import scala.util.{Failure, Success, Try}
 
 
@@ -20,19 +21,19 @@ class StdSchemaGetter(uri: String) extends SchemaGetter[StdSchema] with Logging 
     val stream_dcatap = getClass.getResourceAsStream("/stdSchema/std-dcatapit.json")
     val stream_dataschema = getClass.getResourceAsStream("/stdSchema/std-dataschema.json")
 
-    val classDataSchema = Try(JsonConverter.fromJson[DatasetSchema](stream_dataschema))
-    val classDataDcatapit = Try(JsonConverter.fromJson[DcatapitInfo](stream_dcatap))
-    val classDataOperational = Try(JsonConverter.fromJson[OperationalInfo](stream_operational))
+    val classDataSchema = Try(JsonConverter.fromJson[DatasetCatalog](stream_dataschema))
+    val classDataDcatapit = Try(JsonConverter.fromJson[DcatApIt](stream_dcatap))
+    val classDataOperational = Try(JsonConverter.fromJson[Operational](stream_operational))
 
-    val res: Try[Schema] = for {
+    val res: Try[MetaCatalog] = for {
       ds <- classDataSchema
       dcatapitInfo <- classDataDcatapit
       operationalInfo <- classDataOperational
-    } yield Schema(ds, dcatapitInfo, operationalInfo)
+    } yield MetaCatalog(ds,  operationalInfo, dcatapitInfo)
 
     res match {
       case Success(schema) =>
-        Some(schema.convertToStdSchema().get)
+        Some(convertToStdSchema(schema).get)
       case Failure(ex) => logger.error(ex.getMessage)
         None
     }

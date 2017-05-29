@@ -1,7 +1,6 @@
 package it.teamDigitale.daf.schemamanager
 
 import it.gov.daf.catalogmanagerclient.model.MetaCatalog
-import it.teamDigitale.daf.datastructures.Model.{DatasetType, Schema}
 import it.teamDigitale.daf.datastructures.uri.UriDataset
 import it.teamDigitale.daf.utils.JsonConverter
 import org.apache.logging.log4j.scala.Logging

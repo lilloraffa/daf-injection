@@ -1,5 +1,6 @@
 package it.teamDigitale.daf.schemamanager
 
+import it.gov.daf.catalogmanagerclient.model.{DatasetCatalog, MetaCatalog}
 import it.teamDigitale.daf.datastructures.{ConvSchema, StdSchema}
 
 /**
@@ -21,7 +22,7 @@ object CoherenceChecker {
       .filter(_.metadata.required == 1D)
       .map(x => x.name)
 
-    val convFields = convSchema.reqFields.map(x => x.field_std).toSet
+    val convFields = convSchema.reqFields.map(x => x.fieldStd).toSet
 
     reqStdFields.forall(x => convFields.contains(x))
   }
@@ -33,7 +34,7 @@ object CoherenceChecker {
     * @param schema
     * @return
     */
-  def checkCoherenceDataSchema(datasetSchema: DatasetSchema, schema: Schema): Boolean = true
+  def checkCoherenceDataSchema(datasetSchema: DatasetCatalog, schema: MetaCatalog): Boolean = true
 
 
 

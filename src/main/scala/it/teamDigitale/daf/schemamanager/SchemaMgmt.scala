@@ -1,7 +1,7 @@
 package it.teamDigitale.daf.schemamanager
 
+import it.gov.daf.catalogmanagerclient.model.DatasetCatalog
 import it.teamDigitale.daf.datamanagers.examples.StdSchemaGetter
-import it.teamDigitale.daf.datastructures.Model.DatasetSchema
 import it.teamDigitale.daf.datastructures.{ConvSchema, StdSchema}
 import org.apache.logging.log4j.scala.Logging
 
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.scala.Logging
   */
 //class SchemaMgmt(convSchemaIn: ConvSchema, inputSchema: Option[DataSchema]= None)  extends Serializable with Logging {
 @Deprecated
-class SchemaMgmt(val convSchema: ConvSchema, inputSchema: Option[DatasetSchema]= None)  extends Serializable with Logging {
+class SchemaMgmt(val convSchema: ConvSchema, inputSchema: Option[DatasetCatalog]= None)  extends Serializable with Logging {
 
   val stdSchema: Option[StdSchema]  = extractSchema(convSchema.stdSchemaUri)
 
@@ -70,7 +70,7 @@ class SchemaMgmt(val convSchema: ConvSchema, inputSchema: Option[DatasetSchema]=
         case Some(schema) => schema.dataSchema.fields.map(x => (x.name, x.metadata.required.asInstanceOf[Int]))
         case None => Seq()
       }
-      val inStdFields = convSchema.reqFields.map(x => x.field_std)
+      val inStdFields = convSchema.reqFields.map(x => x.fieldStd)
 
       val stdFieldsNonEmpty = stdFields.nonEmpty
       val inStdFieldsNonEmpty = convSchema.reqFields.nonEmpty && verifySchema(inStdFields, stdFields)

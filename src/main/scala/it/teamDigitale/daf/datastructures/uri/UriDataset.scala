@@ -48,10 +48,9 @@ object UriDataset extends Logging {
           nameDs = uriParts(5))
     } match {
       case Success(s) => s
-      case Failure(err) => {
+      case Failure(err) =>
         logger.error("Error while creating uri: " + uri + " - " + err.getMessage)
         UriDataset()
-      }
     }
     
   }
