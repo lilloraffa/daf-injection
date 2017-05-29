@@ -11,18 +11,21 @@ import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
   */
 object JsonConverter {
 
+  lazy val mapper = new ObjectMapper() with ScalaObjectMapper
+  mapper.registerModule(DefaultScalaModule)
+  mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+
+
   def fromJson[T](json: String)(implicit m: Manifest[T]): T = {
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-    mapper.registerModule(DefaultScalaModule)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
     mapper.readValue[T](json)
   }
 
   def fromJson[T](json: InputStream)(implicit m: Manifest[T]): T = {
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-    mapper.registerModule(DefaultScalaModule)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
     mapper.readValue[T](json)
+  }
+
+  def toJson(value: Any): String = {
+    mapper.writeValueAsString(value)
   }
 
 }

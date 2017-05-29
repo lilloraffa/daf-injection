@@ -3,14 +3,15 @@ package it.teamDigitale.daf.ingestion
 import java.io.File
 
 import com.databricks.spark.avro.SchemaConverters
-import it.teamDigitale.daf.datastructures.Model.Schema
+import it.gov.daf.catalogmanagerclient.model.MetaCatalog
+import it.teamDigitale.daf.utils.JsonConverter
 import org.apache.avro.Schema.Parser
 import org.apache.logging.log4j.scala.Logging
 import org.apache.spark.sql.functions.{col, expr}
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SaveMode}
 import org.apache.spark.{SparkConf, SparkContext}
-
+import it.teamDigitale.daf._
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -33,15 +34,15 @@ class IngestionManager extends Logging {
       .load(path)
   }
 
-  private def enrichDataFrame(df: DataFrame, schema: Schema) : (DataFrame, List[String]) = {
+  private def enrichDataFrame(df: DataFrame, schema: MetaCatalog) : (DataFrame, List[String]) = {
     val timestamp: Long = System.currentTimeMillis / 1000
-    schema.operational.is_std match {
-      case true =>
-        val newdf = df.withColumn("owner", expr("'" + schema.dcatapit.dct_rightsHolder.`val` + "'"))
+    schema.operational.isStd match {
+      case x:Integer if x==1 =>
+        val newdf = df.withColumn("owner", expr("'" + schema.dcatapit.dctRightsHolder._val + "'"))
           .withColumn("ts", expr("'" + timestamp + "'"))
         val partitionList = List("owner", "ts")
         (newdf, partitionList)
-      case false =>
+      case _ =>
         val newdf = df.withColumn("ts", expr("'" + timestamp + "'"))
         val partitionList = List("ts")
         (newdf, partitionList)
@@ -50,7 +51,7 @@ class IngestionManager extends Logging {
     }
   }
 
-  private def writeDF(df:DataFrame, schema: Schema, filePath: String) = Try{
+  private def writeDF(df:DataFrame, schema: MetaCatalog, filePath: String) = Try{
 
     val (enrichedDF, partitionList) = enrichDataFrame(df, schema)
 
@@ -63,16 +64,18 @@ class IngestionManager extends Logging {
       .parquet(filePath + ".parquet")
   }
 
-  def readAvroSchema(schemaLocation: String): org.apache.avro.Schema = {
-    new Parser().parse(new File(schemaLocation))
+  def readAvroSchema(string: String): org.apache.avro.Schema = {
+    new Parser().parse(string)
   }
 
-  def write( schemaLocation: String, schema: Schema, sep: String = ",", isHeaderDefined: Boolean = true): Boolean = {
+  def write(schema: MetaCatalog, sep: String = ",", isHeaderDefined: Boolean = true): Boolean = {
 
-    val avroSchema = readAvroSchema(schemaLocation)
+    val datasetSchema = JsonConverter.toJson(schema.dataschema)
 
-    val inputPath = schema.operational.input_src.url
-    val outputPath = schema.convertToUriDataset().get.getUrl()
+    val avroSchema = readAvroSchema(datasetSchema)
+
+    val inputPath = schema.operational.inputSrc.url
+    val outputPath = datastructures.convertToUriDatabase(schema).get.getUrl() // schema.convertToUriDataset().get.getUrl()
 
     val customSchema: StructType = SchemaConverters.toSqlType(avroSchema).dataType.asInstanceOf[StructType]
 

@@ -17,7 +17,7 @@ object TestWorkflow extends App with Logging{
 
   val convSchema = for{
     schema <- tryschema
-    convSchema <- schema.convertToConvSchema()
+    convSchema <- it.teamDigitale.daf.datastructures.convertToConvSchema(schema)
   } yield convSchema
 
   convSchema match {
@@ -27,7 +27,7 @@ object TestWorkflow extends App with Logging{
 
   val stdSchema = for{
     schema <- tryschema
-    convSchema <- schema.convertToStdSchema()
+    convSchema <- it.teamDigitale.daf.datastructures.convertToStdSchema(schema)
   } yield convSchema
 
   stdSchema match {

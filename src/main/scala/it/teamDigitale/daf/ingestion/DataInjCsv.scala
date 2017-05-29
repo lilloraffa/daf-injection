@@ -203,19 +203,19 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
 		val stdFields = stdSchema.dataSchema.fields.map{ schemaField =>
 
 		  val nameStd = schemaField.name
-		  val typeStd = schemaField.`type`
-		  val resLUConv = convSchema.reqFields.filter(x=> x.field_std==nameStd)
+		  val typeStd = schemaField._type
+		  val resLUConv = convSchema.reqFields.filter(x=> x.fieldStd==nameStd)
 		  resLUConv match {
 		    //The StdSchema Field is not present in the input list --> then it becomes empty (it has been already checked that this field is nullable and not required)
 		    case Nil => lit(null).as(nameStd).cast(FieldTypeMgmt.convAvro2Spark(typeStd.toString))
 
 		    //A conversion has been identified and it is unique
-		    case x::Nil => expr(x.formula).as(x.field_std)
+		    case x::Nil => expr(x.formula).as(x.fieldStd)
 
 		    //More than one conversion has been identified, this should not happen... I'm taking the first element for now and log
 		    case x::rest =>
 					logger.warn(s"Multiple conversions identified for the attribute $nameStd. Only one will be taken")
-					expr(x.formula).as(x.field_std)
+					expr(x.formula).as(x.fieldStd)
 
 		  }
 

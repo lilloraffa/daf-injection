@@ -1,5 +1,6 @@
 package it.teamDigitale.daf.schemamanager
 
+import it.gov.daf.catalogmanagerclient.model.MetaCatalog
 import it.teamDigitale.daf.datastructures.Model.{DatasetType, Schema}
 import it.teamDigitale.daf.datastructures.uri.UriDataset
 import it.teamDigitale.daf.utils.JsonConverter
@@ -20,7 +21,7 @@ class SchemaManager extends Logging {
     * @param uriDataset to query
     * @return schema associated to the input uri
     */
-  def getSchemaFromUri(uriCatalog: String, uriDataset: String): Try[Schema] = {
+  def getSchemaFromUri(uriCatalog: String, uriDataset: String): Try[MetaCatalog] = {
     lazy val request = s"$uriCatalog/$uriDataset"
     //TODO send http request from the web server
     val httpRequest = getDatafromHttp(request)
@@ -39,21 +40,29 @@ class SchemaManager extends Logging {
     * @param json
     * @return a schema parsing the input json
     */
-  def getSchemaFromJson(json: String): Try[Schema] = {
+  def getSchemaFromJson(json: String): Try[MetaCatalog] = {
 
-    val tryschema = Try(JsonConverter.fromJson[Schema](json))
+    val tryschema = Try(JsonConverter.fromJson[MetaCatalog](json))
+
+//    val schema = tryschema.flatMap { s =>
+//      s.operational.uri match {
+//        case Some(_) => Try(s)
+//        case None =>
+//          for {
+//            newUri <- it.teamDigitale.daf.datastructures.convertToUriDatabase(s).map(_.getUri())
+//            operational <- Try(s.operational.copy(uri = newUri))
+//            newSchema <- Try(s.copy( operational = operational))
+//          } yield newSchema
+//
+//      }
+//    }
 
     val schema = tryschema.flatMap { s =>
-      s.operational.uri match {
-        case Some(_) => Try(s)
-        case None =>
           for {
-            newUri <- s.convertToUriDataset.map(_.getUri())
-            operational <- Try(s.operational.copy(uri = Some(newUri)))
+            newUri <- it.teamDigitale.daf.datastructures.convertToUriDatabase(s).map(_.getUri())
+            operational <- Try(s.operational.copy(uri = newUri))
             newSchema <- Try(s.copy( operational = operational))
           } yield newSchema
-
-      }
     }
 
     schema

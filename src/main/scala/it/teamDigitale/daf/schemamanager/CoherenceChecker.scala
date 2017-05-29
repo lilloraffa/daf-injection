@@ -1,6 +1,5 @@
 package it.teamDigitale.daf.schemamanager
 
-import it.teamDigitale.daf.datastructures.Model.{DatasetSchema, Schema}
 import it.teamDigitale.daf.datastructures.{ConvSchema, StdSchema}
 
 /**

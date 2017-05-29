@@ -252,7 +252,7 @@ class DataManagerTest extends Specification with Mockito with Logging {
    "returns a right schema mocking the httpRequest to the catalog manager" in {
      val mockedDataManager = mock[SchemaManager]
      val pippo: OngoingStubbing[Try[String]] = mockedDataManager.getDatafromHttp(idDataset) returns Success(httpResponse)
-     val s = mockedDataManager.getSchemaFromUri(idDataset)
+     val s = mockedDataManager.getSchemaFromUri(uri,idDataset)
      println(pippo)
      println(s)
      s.isSuccess must be equals true

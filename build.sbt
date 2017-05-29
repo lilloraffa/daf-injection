@@ -1,4 +1,4 @@
-name := "Injection Module"
+name := "Ingestion Module"
 version := "0.1.0"
 organization := "it.teamdigitale"
 
@@ -31,7 +31,8 @@ libraryDependencies ++= Seq(
   //JSON Library
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
-  "com.databricks" %% "spark-avro" % "3.2.0"
+  "com.databricks" %% "spark-avro" % "3.2.0",
+  "it.gov.daf" %% "daf-catalog-manager-client" % "1.0.0"
   //"com.typesafe.play" %% "play-json" % playVersion exclude("com.fasterxml.jackson.core", "jackson-databind")
 
 ) ++ dependencyToProvide()

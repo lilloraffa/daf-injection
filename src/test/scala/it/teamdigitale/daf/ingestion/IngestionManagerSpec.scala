@@ -1,8 +1,8 @@
 package it.teamdigitale.daf.ingestion
 
+import it.gov.daf.catalogmanagerclient.model.{DatasetCatalog, DcatApIt, MetaCatalog, Operational}
 import it.teamDigitale.daf.datamanagers.examples.ConvSchemaGetter.getClass
 import it.teamDigitale.daf.datastructures.ConvSchema
-import it.teamDigitale.daf.datastructures.Model.{DatasetSchema, DcatapitInfo, OperationalInfo, Schema}
 import it.teamDigitale.daf.ingestion.IngestionManager
 import it.teamDigitale.daf.schemamanager.SchemaManager
 import it.teamDigitale.daf.utils.JsonConverter
@@ -18,21 +18,21 @@ import scala.util.{Success, Try}
 class IngestionManagerSpec extends Specification with Logging {
 
 
-  def getTestSchema() : Try[Schema] = {
+  def getTestSchema() : Try[MetaCatalog] = {
 
       val stream_operational = getClass.getResourceAsStream("/dataschema/data-operational.json")
       val stream_dcatap = getClass.getResourceAsStream("/dataschema/data-dcatapit.json")
       val stream_dataschema = getClass.getResourceAsStream("/dataschema/data-dataschema.json")
 
-      val classDataSchema = Try(JsonConverter.fromJson[DatasetSchema](stream_dataschema))
-      val classDataDcatapit = Try(JsonConverter.fromJson[DcatapitInfo](stream_dcatap))
-      val classDataOperational = Try(JsonConverter.fromJson[OperationalInfo](stream_operational))
+      val classDataSchema = Try(JsonConverter.fromJson[DatasetCatalog](stream_dataschema))
+      val classDataDcatapit = Try(JsonConverter.fromJson[DcatApIt](stream_dcatap))
+      val classDataOperational = Try(JsonConverter.fromJson[Operational](stream_operational))
 
       for {
         ds <- classDataSchema
         dcatapitInfo <- classDataDcatapit
         operationalInfo <- classDataOperational
-      } yield Schema(ds, dcatapitInfo, operationalInfo)
+      } yield MetaCatalog(ds, operationalInfo, dcatapitInfo)
   }
 
   "The Injestion Manager" should {
@@ -47,7 +47,7 @@ class IngestionManagerSpec extends Specification with Logging {
 
       val schema = getTestSchema().get
 
-      val check = injManager.write(fileSchema,schema)
+      val check = injManager.write(schema)
       //println(avroSchema.get)
      // avroSchema.isSuccess must be equals true
      // "Hello world" must haveSize(11)

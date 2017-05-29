@@ -1,6 +1,6 @@
 package it.teamDigitale.daf.datastructures
 
-import it.teamDigitale.daf.datastructures.Model.DatasetSchema
+import it.gov.daf.catalogmanagerclient.model.DatasetCatalog
 
 case class StdSchema (
                        name: String = "",
@@ -11,5 +11,5 @@ case class StdSchema (
                        cat: Seq[String] = Seq(),
                        groupOwn: String,
                        owner: String,
-                       dataSchema: DatasetSchema
+                       dataSchema: DatasetCatalog
                      )
