@@ -13,7 +13,7 @@ package object datastructures {
 
   def convertToUriDatabase(schema: MetaCatalog) = Try {
 
-    val typeDs = if (schema.operational.isStd == 1)
+    val typeDs = if (schema.operational.isStd)
       DatasetType.STANDARD
     else
       DatasetType.ORDINARY
@@ -31,9 +31,9 @@ package object datastructures {
 
   def convertToConvSchema(schema: MetaCatalog) = Try{
     ConvSchema(
-      uri = Option(schema.operational.uri),
+      logicalUri = Option(schema.operational.logicalUri),
       name = schema.dcatapit.dctTitle._val,
-      isStd = (schema.operational.isStd > 0),
+      isStd = schema.operational.isStd ,
       theme = schema.dcatapit.dcatTheme._val,
       cat = schema.dcatapit.dctSubject.map(x => x._val),
       groupOwn = schema.operational.groupOwn,
@@ -48,12 +48,12 @@ package object datastructures {
 
   def convertToStdSchema(schema: MetaCatalog) = Try{
 
-    if(schema.operational.uri.size < 1) throw new RuntimeException("No uri associated to this schema")
+    if(schema.operational.logicalUri.size < 1) throw new RuntimeException("No uri associated to this schema")
 
     StdSchema(
       name = schema.dcatapit.dctTitle._val,
       nameDataset = schema.dataschema.name,
-      uri = schema.operational.uri,
+      uri = schema.operational.logicalUri,
       theme = schema.dcatapit.dcatTheme._val,
       cat = schema.dcatapit.dctSubject.map(x => x._val),
       groupOwn =  schema.operational.groupOwn,

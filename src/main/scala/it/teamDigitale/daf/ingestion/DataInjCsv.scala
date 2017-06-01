@@ -160,7 +160,7 @@ class DataInjCsv(schemaMgmt: SchemaMgmt) extends Serializable with Logging {
    * This function is needed to get the uri of the incoming dataset, it manages the construction of uri for new dataset.
    */
   private def getUriDs(convSchema: ConvSchema, typeDsIn: String = ""): UriDataset = {
-    (convSchema.uri, convSchema.isStd) match {
+    (convSchema.logicalUri, convSchema.isStd) match {
       //URI already exists, so the dataset is already present in the catalogue
       case (Some(s), _) => UriDataset(s)
 

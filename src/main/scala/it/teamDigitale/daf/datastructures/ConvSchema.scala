@@ -4,7 +4,7 @@ import it.gov.daf.catalogmanagerclient.model.DatasetCatalog
 
 case class ConvSchema (
                         name: String,
-                        uri: Option[String],
+                        logicalUri: Option[String],
                         isStd: Boolean = false,
                         theme: String,
                         cat: Seq[String] = Seq(),

@@ -59,7 +59,7 @@ class SchemaManager extends Logging {
     val schema = tryschema.flatMap { s =>
           for {
             newUri <- it.teamDigitale.daf.datastructures.convertToUriDatabase(s).map(_.getUri())
-            operational <- Try(s.operational.copy(uri = newUri))
+            operational <- Try(s.operational.copy(logicalUri = newUri))
             newSchema <- Try(s.copy( operational = operational))
           } yield newSchema
     }

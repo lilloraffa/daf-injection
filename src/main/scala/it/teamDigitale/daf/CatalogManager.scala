@@ -18,7 +18,7 @@ class CatalogManager() extends Logging{
   def read(uri: String) : Try[MetaCatalog] = ???
   def write(schema: MetaCatalog) : Boolean = {
 
-    if(schema.operational.stdSchema == 1 ) {
+    if(schema.operational.stdSchema != null ) {
       val stdUri = schema.operational.stdSchema.stdUri
 
       val checkSchema = for {
@@ -30,11 +30,11 @@ class CatalogManager() extends Logging{
 
       checkSchema match {
         case Success(value) =>
-          logger.info(s"Storing schema having url ${schema.operational.uri}.")
+          logger.info(s"Storing schema having url ${schema.operational.logicalUri}.")
           //salva schema
           value
         case Failure(ex)  =>
-          logger.error(s"Unable to write the schema with uri ${schema.operational.uri}. ERROR message: \t ${ex.getMessage}")
+          logger.error(s"Unable to write the schema with uri ${schema.operational.logicalUri}. ERROR message: \t ${ex.getMessage}")
           false
       }
 
@@ -44,6 +44,7 @@ class CatalogManager() extends Logging{
       true
     }
   }
+
 
 
 }

@@ -37,7 +37,7 @@ class IngestionManager extends Logging {
   private def enrichDataFrame(df: DataFrame, schema: MetaCatalog) : (DataFrame, List[String]) = {
     val timestamp: Long = System.currentTimeMillis / 1000
     schema.operational.isStd match {
-      case x:Integer if x==1 =>
+      case true =>
         val newdf = df.withColumn("owner", expr("'" + schema.dcatapit.dctRightsHolder._val + "'"))
           .withColumn("ts", expr("'" + timestamp + "'"))
         val partitionList = List("owner", "ts")
